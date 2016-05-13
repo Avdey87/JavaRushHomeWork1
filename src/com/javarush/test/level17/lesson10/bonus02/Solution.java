@@ -39,6 +39,7 @@ public class Solution {
     }
 
     public static void main(String[] args) {
-        //start here - начни тут
+        //start here - начни тут проверка
+        /// проверкак связи
     }
 }
