@@ -11,13 +11,13 @@ public class Ball extends BaseObject
     }
 
     @Override
-    void draw()
+    public void draw(Canvas canvas)
     {
 
     }
 
-    @Override
-    void move()
+     @Override
+    public void move()
     {
 
     }
