@@ -18,7 +18,7 @@ public class BaseObject
         this.isAlive = true;
     }
 
-    public boolean isAlive()
+     public boolean isAlive()
     {
         return isAlive;
     }
