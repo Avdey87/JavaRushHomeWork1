@@ -14,15 +14,15 @@ public class Space
     private ArrayList<Rocket> rockets = new ArrayList<>();
     private ArrayList<Bomb> bombs = new ArrayList<>();
 
+    public void setShip(SpaceShip ship)
+    {
+        this.ship = ship;
+    }
+
     public Space(int width, int height)
     {
         this.width = width;
         this.height = height;
-    }
-
-    public void setShip(SpaceShip ship)
-    {
-        this.ship = ship;
     }
 
     public int getWidth()
@@ -35,7 +35,7 @@ public class Space
         return height;
     }
 
-    public SpaceShip getSpaceShip()
+    public SpaceShip getShip()
     {
         return ship;
     }
@@ -53,6 +53,20 @@ public class Space
     public ArrayList<Bomb> getBombs()
     {
         return bombs;
+    }
+
+    public void run()
+    {
+
+    }
+     public void draw()
+     {
+
+     }
+
+    public void sleep(int ms)
+    {
+
     }
 
     public static void main(String[] args)
