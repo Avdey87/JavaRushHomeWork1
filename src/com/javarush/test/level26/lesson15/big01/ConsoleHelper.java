@@ -1,5 +1,6 @@
 package com.javarush.test.level26.lesson15.big01;
 
+import javax.swing.*;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -15,13 +16,14 @@ public class ConsoleHelper
         System.out.println(message);
 
     }
-static String askCurrencyCode()
+static void askCurrencyCode()
 {
     String test;
+    JProgressBar res = null;
     writeMessage(res.getString());
 
 }
-    static String[] getValidTwoDigits(String currencyCode)
+    static void getValidTwoDigits(String currencyCode)
     {
 
     }
