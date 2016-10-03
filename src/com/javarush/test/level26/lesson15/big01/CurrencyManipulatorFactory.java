@@ -3,9 +3,7 @@ package com.javarush.test.level26.lesson15.big01;
 import java.util.Collection;
 import java.util.HashMap;
 
-/**
- * Created by aavdeev on 16.08.2016.
- */
+
 public final class CurrencyManipulatorFactory
 {
     static HashMap<String, CurrencyManipulator> map = new HashMap<>();
