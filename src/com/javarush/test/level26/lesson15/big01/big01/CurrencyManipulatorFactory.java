@@ -1,9 +1,13 @@
-package com.javarush.test.level26.lesson15.big01;
+package com.javarush.test.level26.lesson15.big01.big01;
+
+import com.javarush.test.level26.lesson15.big01.big01.command.CurrencyManipulator;
 
 import java.util.Collection;
 import java.util.HashMap;
 
-
+/**
+ * Created by aavdeev on 03.10.2016.
+ */
 public final class CurrencyManipulatorFactory
 {
     static HashMap<String, CurrencyManipulator> map = new HashMap<>();
