@@ -20,6 +20,10 @@ static {
 
 }
 
+    private CommandExecutor()
+    {
+    }
+
 
     public static final void execute(Operation operation)
     {
