@@ -1,111 +1,60 @@
 package com.javarush.test.level26.lesson15.big01;
 
-import com.javarush.test.level26.lesson15.big01.exception.InterruptOperationException;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ResourceBundle;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-
+/**
+ * Created by aavdeev on 05.10.2016.
+ */
 public class ConsoleHelper
 {
-    private static ResourceBundle res = ResourceBundle.getBundle(CashMachine.RESOURCE_PATH + "common_en");
-
-    static BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-
-    public static void writeMessage(String message)
-    {
+    private static BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
+    public static void  writeMessage(String message){
         System.out.println(message);
     }
-
-    public static void printExitMessage()
+    public static String readString()
     {
-        ConsoleHelper.writeMessage(res.getString("the.end"));
+        String s = "";
+        try {s = bufferedReader.readLine();}
+        catch (IOException e) {}
+        return s;
     }
-
-    public static String readString() throws InterruptOperationException
-    {
-        String message = "";
-        try
-        {
-            message = reader.readLine();
-            if (message.equalsIgnoreCase(res.getString("operation.EXIT")))
-                throw new InterruptOperationException();
+    public static String askCurrencyCode(){
+        String s="";
+        writeMessage("Enter the currency code(3 symbols): ");
+        s=readString();
+        while (s.length()!=3){
+            writeMessage("You've entered wrong code. Try again:");
+            s = readString();
         }
-        catch (IOException ignored)
-        {
-        }
-        return message;
+        s.toUpperCase();
+        return s;
     }
-
-    public static String askCurrencyCode() throws InterruptOperationException
-    {
-        String test;
-        writeMessage(res.getString("choose.currency.code"));
-        while (true)
-        {
-            test = readString();
-            if (test.length() == 3)
-                break;
-            else
-                writeMessage(res.getString("invalid.data"));
-
-        }
-        test = test.toUpperCase();
-        return test;
-    }
-
-    public static String[] getValidTwoDigits(String currencyCode) throws InterruptOperationException
-    {
+    public static String[] getValidTwoDigits(String currencyCode){
         String[] array;
-        writeMessage(String.format(res.getString("choose.denomination.and.count.format"), currencyCode));
-
+        int nom;
+        int kol;
+        writeMessage("Input denomination and count, please:");
         while (true)
         {
             String s = readString();
             array = s.split(" ");
-            int k;
-            int l;
             try
             {
-                k = Integer.parseInt(array[0]);
-                l = Integer.parseInt(array[1]);
+                nom = Integer.parseInt(array[0]);
+                kol = Integer.parseInt(array[1]);
+                if (nom <= 0 || kol <= 0 || array.length > 2)
+                {
+                    writeMessage("Incorrect input! Retry input, please:");
+                    continue;
+                }
+                else break;
             }
-            catch (Exception e)
-            {
-                writeMessage(res.getString("invalid.data"));
-                continue;
-            }
-            if (k <= 0 || l <= 0 || array.length > 2)
-            {
-                writeMessage(res.getString("invalid.data"));
-                continue;
-            }
-            break;
+            catch (Exception e){}
+            writeMessage("Incorrect input! Retry input, please:");
         }
         return array;
     }
-
-    public static Operation askOperation() throws InterruptOperationException
-    {
-        while (true)
-        {
-            String line = readString();
-            if (checkWithRegExp(line))
-                return Operation.getAllowableOperationByOrdinal(Integer.parseInt(line));
-            else
-                writeMessage(res.getString("invalid.data"));
-        }
-
-    }
-
-    public static boolean checkWithRegExp(String Name)
-    {
-        Pattern p = Pattern.compile("^[1-4]$");
-        Matcher m = p.matcher(Name);
-        return m.matches();
-    }
 }
+

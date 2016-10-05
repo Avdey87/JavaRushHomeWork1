@@ -1,9 +1,9 @@
 package com.javarush.test.level26.lesson15.big01.command;
 
-import com.javarush.test.level26.lesson15.big01.exception.InterruptOperationException;
-
-
-interface Command
+/**
+ * Created by aavdeev on 04.10.2016.
+ */
+public interface Command
 {
-    void execute() throws InterruptOperationException;
+    public void execute();
 }
