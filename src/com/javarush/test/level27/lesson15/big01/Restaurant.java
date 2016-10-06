@@ -3,10 +3,8 @@ package com.javarush.test.level27.lesson15.big01;
 /**
  * Created by aavdeev on 06.10.2016.
  */
-public class Restaurant
-{
-    public static void main(String[] args)
-    {
-
+public class Restaurant {
+    public static void main(String[] args) {
+        new Tablet(5).createOrder();
     }
 }
