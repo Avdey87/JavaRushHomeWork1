@@ -8,35 +8,36 @@ import java.util.Map;
  */
 public class CurrencyManipulator
 {
+    public String currencyCode;
+    private Map<Integer, Integer> denominations = new HashMap<>();
     public CurrencyManipulator(String currencyCode)
     {
         this.currencyCode = currencyCode;
     }
-
     public String getCurrencyCode()
-
     {
         return currencyCode;
     }
-
-    private String currencyCode;
-
-    Map<Integer, Integer> denominations = new HashMap<>();
-
     public void addAmount(int denomination, int count)
     {
-        if(denominations.containsKey(denomination))
-            denominations.put(denomination, denominations.get(denomination) + count);
-        else
+        if(denominations.containsKey(denomination)){
+            denominations.put(denomination,denominations.get(denomination)+count);
+        }else{
             denominations.put(denomination,count);
-
+        }
     }
-
-    public int getTotalAmount(){
-        int result = 0;
-        for(Map.Entry<Integer,Integer> pair : denominations.entrySet())
-            result = result + (pair.getKey() * pair.getValue());
-
+    public int getTotalAmount()
+    {   int result = 0;
+        for (Map.Entry<Integer,Integer> entry: denominations.entrySet())
+        {
+            result +=(entry.getKey()*entry.getValue());
+        }
         return result;
+    }
+    public boolean hasMoney()
+    {
+        if (denominations.isEmpty() )
+            return false;
+        else return true;
     }
 }

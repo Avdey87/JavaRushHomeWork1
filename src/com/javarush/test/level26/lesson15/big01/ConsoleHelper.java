@@ -9,52 +9,52 @@ import java.io.InputStreamReader;
  */
 public class ConsoleHelper
 {
-    private static BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
-    public static void  writeMessage(String message){
+    private static BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+    public static void writeMessage(String message){
         System.out.println(message);
     }
     public static String readString()
     {
-        String s = "";
-        try {s = bufferedReader.readLine();}
-        catch (IOException e) {}
-        return s;
-    }
-    public static String askCurrencyCode(){
-        String s="";
-        writeMessage("Enter the currency code(3 symbols): ");
-        s=readString();
-        while (s.length()!=3){
-            writeMessage("You've entered wrong code. Try again:");
-            s = readString();
+        String result = null;
+        try { result = reader.readLine();
         }
-        s.toUpperCase();
-        return s;
+        catch (IOException e) {}
+        return result;
     }
-    public static String[] getValidTwoDigits(String currencyCode){
-        String[] array;
-        int nom;
-        int kol;
-        writeMessage("Input denomination and count, please:");
+    public static String askCurrencyCode()
+    {
+        String result = null;
         while (true)
         {
-            String s = readString();
-            array = s.split(" ");
-            try
-            {
-                nom = Integer.parseInt(array[0]);
-                kol = Integer.parseInt(array[1]);
-                if (nom <= 0 || kol <= 0 || array.length > 2)
-                {
-                    writeMessage("Incorrect input! Retry input, please:");
-                    continue;
-                }
-                else break;
-            }
-            catch (Exception e){}
-            writeMessage("Incorrect input! Retry input, please:");
+            writeMessage("Введите валюту");
+            result = readString();
+            if (result.matches("^...$"))
+                break;
+            else writeMessage("Данные не верны. Попробуйте еще раз.");
         }
-        return array;
+        return result.toUpperCase();
+    }
+    public static String[] getValidTwoDigits(String currencyCode)
+    {   String s;
+        while (true)
+        {
+            writeMessage("Введите номиналал и количество банкнот.");
+            s  = readString();
+            if (s.matches("\\d+ \\d+"))
+                break;
+            else writeMessage("Данные не верны. Попробуйте еще раз.");
+        }
+        return s.split(" ");
+    }
+    public static Operation askOperation()
+    {   Operation result = null;
+        while (true){
+            writeMessage("Выберите операцию. 1 - INFO, 2 - DEPOSIT, 3 - WITHDRAW, 4 - EXIT");
+            try {
+                result = Operation.getAllowableOperationByOrdinal(Integer.parseInt(readString()));
+                break;
+            } catch (Exception e) {writeMessage("Данные не верны. Попробуйте еще раз.");}}
+        return result;
     }
 }
 
