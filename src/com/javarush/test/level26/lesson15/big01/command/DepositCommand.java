@@ -1,20 +1,33 @@
 package com.javarush.test.level26.lesson15.big01.command;
 
+import com.javarush.test.level26.lesson15.big01.CashMachine;
 import com.javarush.test.level26.lesson15.big01.ConsoleHelper;
 import com.javarush.test.level26.lesson15.big01.CurrencyManipulator;
 import com.javarush.test.level26.lesson15.big01.CurrencyManipulatorFactory;
+import com.javarush.test.level26.lesson15.big01.exception.InterruptOperationException;
 
-/**
- * Created by aavdeev on 04.10.2016.
- */
+import java.util.ResourceBundle;
+
+
 class DepositCommand implements Command
 {
+    private ResourceBundle res = ResourceBundle.getBundle(CashMachine.RESOURCE_PATH + "deposit_en");
     @Override
-    public void execute()
+    public void execute() throws InterruptOperationException
     {
-        String code = ConsoleHelper.askCurrencyCode();
-        CurrencyManipulator cm = CurrencyManipulatorFactory.getManipulatorByCurrencyCode(code);
-        String[] str = ConsoleHelper.getValidTwoDigits(code);
-        cm.addAmount(Integer.parseInt(str[0]), Integer.parseInt(str[1]));
+        ConsoleHelper.writeMessage(res.getString("before"));
+        String currencyCode = ConsoleHelper.askCurrencyCode();
+        CurrencyManipulator currencyManipulator = CurrencyManipulatorFactory.getManipulatorByCurrencyCode(currencyCode);
+        String[] moneyAndAmount = ConsoleHelper.getValidTwoDigits(currencyCode);
+        try
+        {
+            int k = Integer.parseInt(moneyAndAmount[0]);
+            int l = Integer.parseInt(moneyAndAmount[1]);
+            currencyManipulator.addAmount(k, l);
+            ConsoleHelper.writeMessage(String.format(res.getString("success.format"), k * l, currencyCode));
+        } catch (NumberFormatException e)
+        {
+            ConsoleHelper.writeMessage(res.getString("invalid.data"));
+        }
     }
 }
