@@ -9,37 +9,30 @@ import java.util.logging.Logger;
 
 public class Tablet extends Observable
 {
-    private final int number;
-    final static Logger logger = Logger.getLogger(Tablet.class.getName());
-
+    private static java.util.logging.Logger logger = Logger.getLogger(Tablet.class.getName());
+    final int number;
     public Tablet(int number)
     {
         this.number = number;
     }
-
     public void createOrder()
     {
-        Order order = null;
         try
         {
-            order = new Order(this);
+            Order order = new Order(this);
+            if (order.isEmpty()) return;
             ConsoleHelper.writeMessage(order.toString());
             setChanged();
             notifyObservers(order);
         }
-        catch (IOException ee)
+        catch (IOException e)
         {
             logger.log(Level.SEVERE, "Console is unavailable.");
         }
     }
-
-    public int getNumber()
-    {
-        return number;
-    }
-
+    @Override
     public String toString()
     {
-        return "Tablet{number=" + number + "}";
+        return "Tablet{number=" + number + "},";
     }
 }

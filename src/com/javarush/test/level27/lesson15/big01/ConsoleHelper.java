@@ -11,27 +11,37 @@ import java.util.List;
 /**
  * Created by aavdeev on 06.10.2016.
  */
-public class ConsoleHelper {
+public class ConsoleHelper
+{
     private static BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-    public static void writeMessage(String message) {
+    public static void writeMessage(String message)
+    {
         System.out.println(message);
     }
-    public static String readString() throws IOException {
+    public static String readString() throws IOException
+    {
         return reader.readLine();
     }
-    public static List<Dish> getAllDishesForOrder() throws IOException {
-        List<Dish> orderedDishes = new ArrayList<>();
-        if (Dish.values().length > 0) {
-            writeMessage(Dish.allDishesToString());
-            String nextDish;
-            while (!"exit".equalsIgnoreCase(nextDish = readString())) {
-                try {
-                    orderedDishes.add(Dish.valueOf(nextDish));
-                } catch (IllegalArgumentException e) {
-                    ConsoleHelper.writeMessage("No such dish: " + nextDish);
-                }
+    public static List<Dish> getAllDishesForOrder() throws IOException
+    {
+        List<Dish> dishList = new ArrayList<>();
+        writeMessage("Please, choose a dish: " + Dish.allDishesToString());
+        do
+        {
+            String dish = readString();
+            if ("exit".equalsIgnoreCase(dish))
+            {
+                break;
+            }
+            try
+            {
+                dishList.add(Dish.valueOf(dish));
+            }
+            catch (IllegalArgumentException e) {
+                ConsoleHelper.writeMessage(String.format("%s is not detected", dish));
             }
         }
-        return orderedDishes;
+        while (true);
+        return dishList;
     }
 }

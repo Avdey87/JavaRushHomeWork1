@@ -9,19 +9,35 @@ import java.util.List;
 /**
  * Created by aavdeev on 06.10.2016.
  */
-public class Order {
+public class Order
+{
     private Tablet tablet;
     private List<Dish> dishes;
-    public Order(Tablet tablet) throws IOException {
+    public Order(Tablet tablet) throws IOException
+    {
+        this.dishes = ConsoleHelper.getAllDishesForOrder();
         this.tablet = tablet;
-        dishes = ConsoleHelper.getAllDishesForOrder();
     }
     @Override
-    public String toString() {
-        if (dishes.isEmpty()) {
+    public String toString()
+    {
+        if (dishes.isEmpty()||dishes.isEmpty())
+        {
             return "";
-        } else {
-            return "Your order: " + dishes + " of " + tablet;
+        } else
+        {
+            return "Your order: " + dishes.toString() + " of " +tablet;
         }
+    }
+    public int getTotalCookingTime()
+    {
+        int totalCookingTime = 0;
+        for (Dish dish : dishes){
+            totalCookingTime +=dish.getDuration();
+        }
+        return totalCookingTime;
+    }
+    public boolean isEmpty(){
+        return dishes ==null || dishes.isEmpty();
     }
 }

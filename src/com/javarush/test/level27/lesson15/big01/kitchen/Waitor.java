@@ -11,8 +11,10 @@ import java.util.Observer;
 public class Waitor implements Observer
 {
     @Override
-    public void update(Observable observable, Object arg)
+    public void update(Observable o, Object arg)
     {
-        ConsoleHelper.writeMessage(arg+" was cooked by " + observable);
+        Cook cook = (Cook) o;
+        Order order = (Order) arg;
+        ConsoleHelper.writeMessage(order + " was cooked by " + cook);
     }
 }
