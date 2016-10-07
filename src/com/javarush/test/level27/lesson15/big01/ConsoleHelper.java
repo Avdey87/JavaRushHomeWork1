@@ -8,38 +8,36 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by aavdeev on 06.10.2016.
- */
-public class ConsoleHelper
-{
-    private static final BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-    public static void writeMessage(String message) //Метод выводит данные на консоль
-    {
+
+public class ConsoleHelper {
+
+    private static final BufferedReader console = new BufferedReader(new InputStreamReader(System.in));
+
+    public static void writeMessage(String message) {
         System.out.println(message);
     }
-    public static String readString() throws IOException //Метод считывает данные с консоли
-    {
-        return reader.readLine();
+
+    public static String readString() throws IOException {
+        return console.readLine();
     }
-    public static List<Dish> getAllDishesForOrder() throws IOException //Формирование списка заказа, просит выбрать из предложенного и формирует заказ по вводу слова exit
-    {
-        List<Dish> dishs = new ArrayList<>();
-        writeMessage("Choose dishes : " + Dish.allDishesToString());
-        String s;
-        while(true)
-        {
-            s = readString();
-            if(s.equals("exit")) break;
-            try
-            {
-                dishs.add(Dish.valueOf(s));
+
+    public static List<Dish> getAllDishesForOrder() throws IOException {
+        List<Dish> dishes = new ArrayList<>();
+        String str;
+        writeMessage("Enter dish...(" + Dish.allDishesToString() + ")");
+        while (true) {
+            str = readString();
+            if ("exit".equals(str)) {
+                break;
             }
-            catch (IllegalArgumentException e)
-            {
-                writeMessage(s + " is not detected");
+
+            try {
+                dishes.add(Dish.valueOf(str));
+            }
+            catch (IllegalArgumentException e) {
+                ConsoleHelper.writeMessage(str + " is not detected");
             }
         }
-        return dishs;
+        return dishes;
     }
 }

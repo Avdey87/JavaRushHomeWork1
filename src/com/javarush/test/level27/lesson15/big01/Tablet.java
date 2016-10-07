@@ -1,5 +1,8 @@
 package com.javarush.test.level27.lesson15.big01;
 
+
+import com.javarush.test.level27.lesson15.big01.ad.AdvertisementManager;
+import com.javarush.test.level27.lesson15.big01.ad.NoVideoAvailableException;
 import com.javarush.test.level27.lesson15.big01.kitchen.Order;
 
 import java.io.IOException;
@@ -7,32 +10,31 @@ import java.util.Observable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class Tablet extends Observable
-{
-    final int number;
-    public static Logger logger = Logger.getLogger(Tablet.class.getName());
-    public Tablet(int number)
-    {
+public class Tablet extends Observable {
+    final static Logger logger = Logger.getLogger(Tablet.class.getName());
+    private final int number;
+
+    public Tablet(int number) {
         this.number = number;
     }
-    public void createOrder() //Создание заказа и отправка его повару
-    {
-        try
-        {
-            Order order = new Order(this);
+    public void createOrder(){
+        Order order=null;
+        try {
+            order = new Order(this);
             ConsoleHelper.writeMessage(order.toString());
-            if(!order.isEmpty()) {
+            new AdvertisementManager(order.getTotalCookingTime()*60).processVideos();
+            if (!order.isEmpty()) {
                 setChanged();
-                notifyObservers(order);}
-        }
-        catch (IOException e)
-        {
-            logger.log(Level.SEVERE,"Console is unavailable.");
+                notifyObservers(order);
+            }
+        }catch (IOException e ){
+            logger.log(Level.SEVERE, "Console is unavailable.");
+        }catch (NoVideoAvailableException v){
+            logger.log(Level.INFO,"No video is available for the order "+order);
         }
     }
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "Tablet{" +
                 "number=" + number +
                 '}';
