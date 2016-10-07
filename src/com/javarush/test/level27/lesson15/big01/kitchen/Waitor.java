@@ -10,11 +10,10 @@ import java.util.Observer;
  */
 public class Waitor implements Observer
 {
+    public Waitor() {}
     @Override
     public void update(Observable o, Object arg)
     {
-        Cook cook = (Cook) o;
-        Order order = (Order) arg;
-        ConsoleHelper.writeMessage(order + " was cooked by " + cook);
+        ConsoleHelper.writeMessage(arg.toString() + " was cooked by " + o.toString());
     }
 }

@@ -9,30 +9,32 @@ import java.util.logging.Logger;
 
 public class Tablet extends Observable
 {
-    private static java.util.logging.Logger logger = Logger.getLogger(Tablet.class.getName());
     final int number;
+    public static Logger logger = Logger.getLogger(Tablet.class.getName());
     public Tablet(int number)
     {
         this.number = number;
     }
-    public void createOrder()
+    public void createOrder() //Создание заказа и отправка его повару
     {
         try
         {
             Order order = new Order(this);
-            if (order.isEmpty()) return;
             ConsoleHelper.writeMessage(order.toString());
-            setChanged();
-            notifyObservers(order);
+            if(!order.isEmpty()) {
+                setChanged();
+                notifyObservers(order);}
         }
         catch (IOException e)
         {
-            logger.log(Level.SEVERE, "Console is unavailable.");
+            logger.log(Level.SEVERE,"Console is unavailable.");
         }
     }
     @Override
     public String toString()
     {
-        return "Tablet{number=" + number + "},";
+        return "Tablet{" +
+                "number=" + number +
+                '}';
     }
 }

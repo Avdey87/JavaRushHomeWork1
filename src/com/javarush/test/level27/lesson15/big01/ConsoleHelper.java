@@ -13,35 +13,33 @@ import java.util.List;
  */
 public class ConsoleHelper
 {
-    private static BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-    public static void writeMessage(String message)
+    private static final BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+    public static void writeMessage(String message) //Метод выводит данные на консоль
     {
         System.out.println(message);
     }
-    public static String readString() throws IOException
+    public static String readString() throws IOException //Метод считывает данные с консоли
     {
         return reader.readLine();
     }
-    public static List<Dish> getAllDishesForOrder() throws IOException
+    public static List<Dish> getAllDishesForOrder() throws IOException //Формирование списка заказа, просит выбрать из предложенного и формирует заказ по вводу слова exit
     {
-        List<Dish> dishList = new ArrayList<>();
-        writeMessage("Please, choose a dish: " + Dish.allDishesToString());
-        do
+        List<Dish> dishs = new ArrayList<>();
+        writeMessage("Choose dishes : " + Dish.allDishesToString());
+        String s;
+        while(true)
         {
-            String dish = readString();
-            if ("exit".equalsIgnoreCase(dish))
-            {
-                break;
-            }
+            s = readString();
+            if(s.equals("exit")) break;
             try
             {
-                dishList.add(Dish.valueOf(dish));
+                dishs.add(Dish.valueOf(s));
             }
-            catch (IllegalArgumentException e) {
-                ConsoleHelper.writeMessage(String.format("%s is not detected", dish));
+            catch (IllegalArgumentException e)
+            {
+                writeMessage(s + " is not detected");
             }
         }
-        while (true);
-        return dishList;
+        return dishs;
     }
 }

@@ -11,33 +11,30 @@ import java.util.List;
  */
 public class Order
 {
-    private Tablet tablet;
-    private List<Dish> dishes;
+    List<Dish> dishes;
+    Tablet tablet;
     public Order(Tablet tablet) throws IOException
     {
-        this.dishes = ConsoleHelper.getAllDishesForOrder();
         this.tablet = tablet;
+        dishes = ConsoleHelper.getAllDishesForOrder();
+    }
+    public int getTotalCookingTime() // Подсчитывает общее время готовки заказа
+    {
+        int summa = 0;
+        for(int i = 0; i < dishes.size(); i++)
+        {
+            summa = summa + dishes.get(i).getDuration();
+        }
+        return summa;
+    }
+    public boolean isEmpty() //Проверяет пуст ли лист заказа
+    {
+        return dishes.isEmpty();
     }
     @Override
     public String toString()
     {
-        if (dishes.isEmpty()||dishes.isEmpty())
-        {
-            return "";
-        } else
-        {
-            return "Your order: " + dishes.toString() + " of " +tablet;
-        }
-    }
-    public int getTotalCookingTime()
-    {
-        int totalCookingTime = 0;
-        for (Dish dish : dishes){
-            totalCookingTime +=dish.getDuration();
-        }
-        return totalCookingTime;
-    }
-    public boolean isEmpty(){
-        return dishes ==null || dishes.isEmpty();
+        if(dishes.isEmpty()) return "";
+        return "Your order: " + dishes + " of " +  tablet.toString();
     }
 }
