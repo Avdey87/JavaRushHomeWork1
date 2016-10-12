@@ -9,7 +9,7 @@ import java.util.List;
 
 public class Order {
 
-    private Tablet tablet;
+    public Tablet tablet;
     private List<Dish> dishes;
 
 

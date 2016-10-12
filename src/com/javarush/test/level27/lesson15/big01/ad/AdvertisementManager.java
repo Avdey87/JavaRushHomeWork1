@@ -2,6 +2,7 @@ package com.javarush.test.level27.lesson15.big01.ad;
 
 import com.javarush.test.level27.lesson15.big01.ConsoleHelper;
 import com.javarush.test.level27.lesson15.big01.statistic.StatisticManager;
+import com.javarush.test.level27.lesson15.big01.statistic.event.NoAvailableVideoEventDataRow;
 import com.javarush.test.level27.lesson15.big01.statistic.event.VideoSelectedEventDataRow;
 
 import java.util.ArrayList;
@@ -12,153 +13,83 @@ import java.util.List;
 
 public class AdvertisementManager
 {
-    private final AdvertisementStorage storage = AdvertisementStorage.getInstance();
-    private int timeSeconds;
-
+    private static final AdvertisementStorage storage = AdvertisementStorage.getInstance();
+    List<Advertisement> videos = storage.list();
+    int timeSeconds;
+    long maxProfit = 0;
+    int minRemainingTime = timeSeconds;
     public AdvertisementManager(int timeSeconds)
     {
         this.timeSeconds = timeSeconds;
     }
-
-    public void processVideos() throws NoVideoAvailableException
+    public void processVideos()
     {
-        List<Advertisement> advertisements = new ArrayList<>();
-        for (Advertisement ad : storage.list())
+        List<Advertisement> bestVariant = new ArrayList<>();
+        bestVariant = pickVideosToList(null, null, timeSeconds, 0, bestVariant);
+        long totalAmount = 0;
+        int totalDuration = 0;
+        for (Advertisement ad : bestVariant)
         {
-            if (ad.getHits() > 0)
+            ad.revalidate();
+            ConsoleHelper.writeMessage(String.format("%s is displaying... %d, %d", ad.getName(), ad.getAmountPerOneDisplaying(), ad.getAmountPerOneDisplaying() * 1000 / ad.getDuration()));
+            totalAmount += ad.getAmountPerOneDisplaying();
+            totalDuration += ad.getDuration();
+        }
+        StatisticManager.getInstance().register(new VideoSelectedEventDataRow(bestVariant, totalAmount, totalDuration));
+    }
+    private List<Advertisement> pickVideosToList(List<Advertisement> previousVideosList, Advertisement previousAd, int remainingTime, long profit, List<Advertisement> bestResult)
+    {
+        List<Advertisement> newList = new ArrayList<>();
+        if (previousVideosList != null)
+        {
+            newList.addAll(previousVideosList);
+            remainingTime -= previousAd.getDuration();
+            profit += previousAd.getAmountPerOneDisplaying();
+            newList.add(previousAd);
+        }
+        for (Advertisement ad : videos)
+        {
+            if (remainingTime == 0)
+                break;
+            if (newList.contains(ad))
+                continue;
+            if (ad.getHits() <= 0)
+                continue;
+            if (remainingTime >= ad.getDuration())
             {
-                advertisements.add(ad);
+                bestResult = pickVideosToList(newList, ad, remainingTime, profit, bestResult);
             }
         }
-        if (advertisements.isEmpty())
+        if (profit > maxProfit)
+        {
+            maxProfit = profit;
+            minRemainingTime = remainingTime;
+            bestResult = newList;
+        } else if (profit == maxProfit && remainingTime < minRemainingTime)
+        {
+            minRemainingTime = remainingTime;
+            bestResult = newList;
+        } else if (profit == maxProfit && remainingTime == minRemainingTime && bestResult.size() > newList.size())
+        {
+            bestResult = newList;
+        }
+        if (bestResult.isEmpty())
+        {
+            StatisticManager.getInstance().register(new NoAvailableVideoEventDataRow(timeSeconds));
             throw new NoVideoAvailableException();
-
-        Collections.sort(advertisements, new Comparator<Advertisement>()
+        }
+        Collections.sort(bestResult, new Comparator<Advertisement>()
         {
             @Override
             public int compare(Advertisement o1, Advertisement o2)
             {
-                if (o1.getAmountPerOneDisplaying() != o2.getAmountPerOneDisplaying())
-                    return Long.compare(o2.getAmountPerOneDisplaying(), o1.getAmountPerOneDisplaying());
-                if (o1.getAmountPerOneDisplaying() * 1000 / o1.getDuration() != o2.getAmountPerOneDisplaying() * 1000 / o2.getDuration())
-                    return Long.compare(o1.getAmountPerOneDisplaying() * 1000 / o1.getDuration(), o2.getAmountPerOneDisplaying() * 1000 / o2.getDuration());
-                return 0;
+                long pricePerVideoDiff = o2.getAmountPerOneDisplaying() - o1.getAmountPerOneDisplaying();
+                if (pricePerVideoDiff != 0)
+                    return (int) pricePerVideoDiff;
+                else
+                    return (int) (o1.getAmountPerOneDisplaying() * 100 / o1.getDuration() - o2.getAmountPerOneDisplaying() * 100 / o2.getDuration());
             }
         });
-
-        advertisements = maxMany(advertisements);
-
-        if (advertisements.isEmpty())
-            throw new NoVideoAvailableException();
-
-        int sumAmount = 0;
-        int sumDuration = 0;
-        for (Advertisement el : advertisements)
-        {
-            sumAmount += el.getAmountPerOneDisplaying();
-            sumDuration += el.getDuration();
-        }
-
-        StatisticManager.getInstance().register(new VideoSelectedEventDataRow(advertisements, sumAmount, sumDuration));
-
-        for (Advertisement advertisement : advertisements)
-        {
-            ConsoleHelper.writeMessage(String.format("%s is displaying... %d, %d",
-                    advertisement.getName(),
-                    advertisement.getAmountPerOneDisplaying(),
-                    advertisement.getAmountPerOneDisplaying() * 1000 / advertisement.getDuration()));
-            advertisement.revalidate();
-        }
-    }
-
-    private List<Advertisement> maxMany(List<Advertisement> advertisements)
-    {
-
-        int timeD = 0;
-        for (Advertisement advertisement : advertisements)
-        {
-            timeD += advertisement.getDuration();
-        }
-
-        if (timeD > timeSeconds)
-        {
-            List<Advertisement> adv = new ArrayList<>();
-            timeD = 0;
-            for (Advertisement el : advertisements)
-            {
-                timeD += el.getDuration();
-                if (timeD <= timeSeconds)
-                {
-                    adv.add(el);
-                }
-            }
-
-            for (int i = 0; i < advertisements.size(); i++)
-            {
-                List<Advertisement> list = new ArrayList<>(advertisements);
-                list.remove(i);
-                int timeD2 = 0;
-                for (Advertisement advertisement2 : list)
-                {
-                    timeD2 += advertisement2.getDuration();
-                }
-                if (timeD2 > timeSeconds)
-                {
-                    list = maxMany(list);
-                }
-                if (adv.size() > 0)
-                {
-                    compareAd(adv, list);
-                } else
-                {
-                    adv.addAll(list);
-                }
-            }
-            return adv;
-        } else
-        {
-            return advertisements;
-        }
-    }
-
-    private void compareAd(List<Advertisement> advertisements, List<Advertisement> list)
-    {
-        long sum = 0;
-        long sum2 = 0;
-        int sumt = 0;
-        int sumt2 = 0;
-        int k = 0;
-        int k2 = 0;
-        for (Advertisement el : advertisements)
-        {
-            sum += el.getAmountPerOneDisplaying();
-            sumt += el.getDuration();
-            k++;
-        }
-        for (Advertisement el : list)
-        {
-            sum2 += el.getAmountPerOneDisplaying();
-            sumt2 += el.getDuration();
-            k2++;
-        }
-        if (sum < sum2)
-        {
-            advertisements.clear();
-            advertisements.addAll(list);
-        } else if (sum == sum2)
-        {
-            if (sumt < sumt2)
-            {
-                advertisements.clear();
-                advertisements.addAll(list);
-            } else if (sumt == sumt2)
-            {
-                if (k > k2)
-                {
-                    advertisements.clear();
-                    advertisements.addAll(list);
-                }
-            }
-        }
+        return bestResult;
     }
 }

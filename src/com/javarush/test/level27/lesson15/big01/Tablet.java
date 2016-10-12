@@ -9,51 +9,41 @@ import java.util.Observable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class Tablet extends Observable {
-
-    private final int number;
-    private static Logger logger = Logger.getLogger(Tablet.class.getName());
-
-
-
-    public Tablet(int number) {
+public class Tablet extends Observable
+{
+    public final int number;
+    public static java.util.logging.Logger logger = Logger.getLogger(Tablet.class.getName());
+    public Tablet(int number)
+    {
         this.number = number;
     }
-
-
     public void createOrder()
     {
         Order order = null;
-        try {
-
+        try
+        {
             order = new Order(this);
             ConsoleHelper.writeMessage(order.toString());
-
-            if(!order.isEmpty()) {
+            if (!order.isEmpty())
+            {
                 AdvertisementManager advertisementManager = new AdvertisementManager(order.getTotalCookingTime() * 60);
                 setChanged();
                 notifyObservers(order);
                 advertisementManager.processVideos();
             }
-        }
-        catch (NoVideoAvailableException e) {
-            logger.log(Level.INFO,"No video is available for the order " + order);
-        }
-        catch (IOException e) {
-            logger.log(Level.SEVERE,"Console is unavailable.");
+        } catch (IOException e)
+        {
+            logger.log(Level.SEVERE, "Console is unavailable.");
+        } catch (NoVideoAvailableException e)
+        {
+            logger.log(Level.INFO, "No video is available for the order " + order);
         }
     }
-
     @Override
-    public String toString() {
-        return "Tablet{number=" + number + "}";
-
+    public String toString()
+    {
+        return "Tablet{" +
+                "number=" + number +
+                '}';
     }
-
-    public int getNumber() {
-        return number;
-    }
-
 }
-
-

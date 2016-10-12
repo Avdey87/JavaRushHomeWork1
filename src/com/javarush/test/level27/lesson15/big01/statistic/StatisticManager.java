@@ -8,90 +8,105 @@ import com.javarush.test.level27.lesson15.big01.statistic.event.VideoSelectedEve
 
 import java.util.*;
 
-public class StatisticManager {
-    private static StatisticManager instance = new StatisticManager();
-    private StatisticStorage statisticStorage = new StatisticStorage();
+public class StatisticManager
+{
+    private StatisticStorage storage = new StatisticStorage();
+    private static StatisticManager ourInstance = new StatisticManager();
     private Set<Cook> cooks = new HashSet<>();
-
-    private StatisticManager() {}
-
-    public static StatisticManager getInstance() {
-        return instance;
+    public static StatisticManager getInstance()
+    {
+        return ourInstance;
     }
-
-    public void register(EventDataRow data) { statisticStorage.put(data); }
-
-    public void register(Cook cook) { cooks.add(cook); }
-
-
-    private class StatisticStorage {
-        private Map<EventType, List<EventDataRow>> map = new HashMap<>();
-        private StatisticStorage() {
-            for (EventType type : EventType.values()) {
-                map.put(type, new ArrayList<EventDataRow>());
-            }
-        }
-        private void put(EventDataRow data) {
-            map.get(data.getType()).add(data);
-        }
-        private List<EventDataRow> get(EventType eventType) {
-            return map.get(eventType);
-        }
+    private StatisticManager()
+    {
     }
-
-
-    public Map<Date, Double> getTotalMoneyPerDay() {
+    public Map<Date, Double> getAdRevenue()
+    {
         Map<Date, Double> resultMap = new TreeMap<>(Collections.reverseOrder());
-
-        for (EventDataRow event : statisticStorage.get(EventType.SELECTED_VIDEOS)) {
-            Date date = dateWithoutTime(event.getDate());
+        for (EventDataRow event : storage.getData(EventType.SELECTED_VIDEOS))
+        {
+            Date date = dateToStringMidnight(event.getDate());
             VideoSelectedEventDataRow eventData = (VideoSelectedEventDataRow) event;
-            if (resultMap.containsKey(date)) {
+            if (resultMap.containsKey(date))
+            {
                 resultMap.put(date, resultMap.get(date) + (0.01d * (double) eventData.getAmount()));
-            } else {
+            } else
+            {
                 resultMap.put(date, (0.01d * (double) eventData.getAmount()));
             }
         }
         return resultMap;
     }
-
-
-    public TreeMap<Date, TreeMap<String, Integer>> getCookInfo() {
-        TreeMap<Date, TreeMap<String, Integer>> map = new TreeMap<>(Collections.reverseOrder());
-
-        for (EventDataRow e : statisticStorage.get(EventType.COOKED_ORDER)) {
-            Date date = dateWithoutTime(e.getDate());
-            CookedOrderEventDataRow cook = (CookedOrderEventDataRow) e;
-
-            int time = cook.getTime();
-            if (time == 0) continue;
+    public Map<Date, Map<String, Integer>> getCookWorkload()
+    {
+        Map<Date, Map<String, Integer>> resultMap = new TreeMap<>(Collections.reverseOrder());
+        for (EventDataRow event : storage.getData(EventType.COOKED_ORDER))
+        {
+            Date date = dateToStringMidnight(event.getDate());
+            CookedOrderEventDataRow eventData = (CookedOrderEventDataRow) event;
+            int time = eventData.getTime();
+            if (time==0)
+                continue;
             if (time % 60 == 0) time = time / 60;
             else time = time / 60 + 1;
-
-            if (map.containsKey(date)) {
-                TreeMap<String, Integer> value = map.get(date);
-                if (value.containsKey(cook.getCookName())) {
-                    value.put(cook.getCookName(), value.get(cook.getCookName()));
+            if (resultMap.containsKey(date))
+            {
+                Map<String, Integer> cookInfo = resultMap.get(date);
+                if (cookInfo.containsKey(eventData.getCookName()))
+                {
+                    cookInfo.put(eventData.getCookName(), cookInfo.get(eventData.getCookName()) + time);
+                } else
+                {
+                    cookInfo.put(eventData.getCookName(), time);
                 }
-                else value.put(cook.getCookName(), time);
-            }
-            else {
-                TreeMap<String, Integer> value = new TreeMap<>();
-                value.put(cook.getCookName(), time);
-                map.put(date, value);
+            } else
+            {
+                TreeMap<String, Integer> cookInfo = new TreeMap<>();
+                cookInfo.put(eventData.getCookName(), time);
+                resultMap.put(date, cookInfo);
             }
         }
-        return map;
+        return resultMap;
     }
-
-
-    private Date dateWithoutTime(Date date) {
-        GregorianCalendar calendar = new GregorianCalendar();
-        calendar.setTime(date);
-        calendar.set(Calendar.HOUR_OF_DAY, 0);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
-        return calendar.getTime();
+    private Date dateToStringMidnight(Date date) //приведение даты к полночи
+    {
+        GregorianCalendar roundedDate = new GregorianCalendar();
+        roundedDate.setTime(date);
+        roundedDate.set(Calendar.HOUR_OF_DAY, 0);
+        roundedDate.set(Calendar.MINUTE, 0);
+        roundedDate.set(Calendar.SECOND, 0);
+        roundedDate.set(Calendar.MILLISECOND, 0);
+        // roundedDate.add(Calendar.DAY_OF_MONTH, (int) (Math.random()*3)); // рандом даты для тестов
+        //  roundedDate.add(Calendar.MONTH, (int) (Math.random()*3));       //
+        return roundedDate.getTime();
+    }
+    public void register(EventDataRow data)
+    {
+        if (data == null) return;
+        storage.put(data);
+    }
+    public void register(Cook cook)
+    {
+        cooks.add(cook);
+    }
+    private static class StatisticStorage  //"хранилище должно быть приватным иннер(вложенным) классом." пробовал и вложенный и иннер.
+    {
+        private Map<EventType, List<EventDataRow>> eventTypeListMap = new HashMap<>();
+        private StatisticStorage()
+        {
+            for (EventType eventType : EventType.values())
+            {
+                eventTypeListMap.put(eventType, new ArrayList<EventDataRow>());
+            }
+        }
+        private void put(EventDataRow data)
+        {
+            if (data == null) return;
+            eventTypeListMap.get(data.getType()).add(data);
+        }
+        private List<EventDataRow> getData(EventType eventType)
+        {
+            return eventTypeListMap.get(eventType);
+        }
     }
 }
