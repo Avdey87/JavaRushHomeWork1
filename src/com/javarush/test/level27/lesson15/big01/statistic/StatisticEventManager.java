@@ -8,16 +8,16 @@ import com.javarush.test.level27.lesson15.big01.statistic.event.VideoSelectedEve
 
 import java.util.*;
 
-public class StatisticManager
+public class StatisticEventManager
 {
     private StatisticStorage storage = new StatisticStorage();
-    private static StatisticManager ourInstance = new StatisticManager();
+    private static StatisticEventManager ourInstance = new StatisticEventManager();
     private Set<Cook> cooks = new HashSet<>();
-    public static StatisticManager getInstance()
+    public static StatisticEventManager getInstance()
     {
         return ourInstance;
     }
-    private StatisticManager()
+    private StatisticEventManager()
     {
     }
     public Map<Date, Double> getAdRevenue()
