@@ -22,7 +22,7 @@ public class Tablet extends Observable {
             order = new Order(this);
             helpForCreating(order);
         }catch (IOException e ){
-            logger.log(Level.SEVERE, "Console is unavailable.");
+            logger.log(Level.SEVERE, "Console is unavailable.");//
         }
     }
     private void helpForCreating(Order order)  {
