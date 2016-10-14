@@ -16,18 +16,12 @@ public class TestOrder extends Order
     }
 
     @Override
-    protected void initDishes()
+    protected void initDishes() throws IOException
     {
-        this.dishes = new ArrayList<>();
-        int numRandom = ThreadLocalRandom.current().nextInt(1, Dish.values().length);
-        if (numRandom == 0)
-        {
-            numRandom = 1;
-        }
+        dishes = new ArrayList<>();
         Dish[] dishMas = Dish.values();
-        for (int i = 0; i < numRandom; i++)
-        {
-            int random = (int) (Math.random() * (Dish.values().length));
+        for(int i = 0; i < (int)(Math.random() * Dish.values().length); i++){
+            int random = (int)(Math.random() * (Dish.values().length));
             dishes.add(dishMas[random]);
         }
     }
