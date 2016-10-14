@@ -3,45 +3,57 @@ package com.javarush.test.level27.lesson15.big01;
 import com.javarush.test.level27.lesson15.big01.ad.AdvertisementManager;
 import com.javarush.test.level27.lesson15.big01.ad.NoVideoAvailableException;
 import com.javarush.test.level27.lesson15.big01.kitchen.Order;
+import com.javarush.test.level27.lesson15.big01.kitchen.TestOrder;
 
 import java.io.IOException;
 import java.util.Observable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class Tablet extends Observable
-{
-    public final int number;
-    public static java.util.logging.Logger logger = Logger.getLogger(Tablet.class.getName());
-    public Tablet(int number)
-    {
+public class Tablet extends Observable {
+    final int number;
+    public static Logger logger = Logger.getLogger(Tablet.class.getName());
+    public Tablet(int number) {
         this.number = number;
     }
-    public void createOrder()
-    {
-        Order order = null;
-        try
-        {
+    public void createOrder(){
+        Order order=null;
+        try {
             order = new Order(this);
-            ConsoleHelper.writeMessage(order.toString());
-            if (!order.isEmpty())
-            {
-                AdvertisementManager advertisementManager = new AdvertisementManager(order.getTotalCookingTime() * 60);
+            helpForCreating(order);
+        }catch (IOException e ){
+            logger.log(Level.SEVERE, "Console is unavailable.");
+        }
+    }
+    private void helpForCreating(Order order)  {
+        ConsoleHelper.writeMessage(order.toString());
+        try {
+            new AdvertisementManager(order.getTotalCookingTime()*60).processVideos();
+            if (!order.isEmpty()) {
                 setChanged();
                 notifyObservers(order);
-                advertisementManager.processVideos();
             }
-        } catch (IOException e)
-        {
-            logger.log(Level.SEVERE, "Console is unavailable.");
-        } catch (NoVideoAvailableException e)
-        {
+        }catch (NoVideoAvailableException v){
             logger.log(Level.INFO, "No video is available for the order " + order);
         }
     }
-    @Override
-    public String toString()
+    public void createTestOrder(){
+        TestOrder();
+    }
+
+    private void TestOrder()
     {
+        TestOrder order=null;
+        try {
+            order = new TestOrder(this);
+            helpForCreating(order);
+        }catch (IOException e ){
+            logger.log(Level.SEVERE, "Console is unavailable.");
+        }
+    }
+
+    @Override
+    public String toString() {
         return "Tablet{" +
                 "number=" + number +
                 '}';
