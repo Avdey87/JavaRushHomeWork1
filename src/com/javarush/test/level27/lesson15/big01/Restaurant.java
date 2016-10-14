@@ -9,12 +9,13 @@ import java.util.List;
 import java.util.Locale;
 
 public class Restaurant {
-    private static final int ORDER_CREATING_INTERVAL = 100;
-    public static void main(String[] args) {
+    private final static int ORDER_CREATING_INTERVAL = 100;
+    public static void main(String[] args)
+    {
         Locale.setDefault(Locale.ENGLISH);
         List<Tablet> tablets = new ArrayList<>();
-        Cook cook1 = new Cook("Burda");
-        Cook cook2 = new Cook("Makarevich");
+        Cook cook1 = new Cook("Amigo");
+        Cook cook2 = new Cook("Elly");
         Waitor waitor = new Waitor();
         cook1.addObserver(waitor);
         cook2.addObserver(waitor);

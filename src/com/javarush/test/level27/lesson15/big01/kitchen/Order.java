@@ -11,55 +11,39 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class Order {
 
-    public Tablet tablet;
     protected List<Dish> dishes;
-
-
-    public Order(Tablet tablet) throws IOException {
+    public Tablet tablet;
+    public Order(Tablet tablet) throws IOException
+    {
         this.tablet = tablet;
-        initDishes();
-
+        this.dishes = initDishes();
     }
-
-    protected void initDishes() throws IOException {
-        ConsoleHelper.writeMessage(Dish.allDishesToString());
-        dishes = ConsoleHelper.getAllDishesForOrder();
+    public String toString()
+    {
+        return dishes.isEmpty() ? "" : String.format("Your order: %s of %s", dishes, tablet);
     }
-
-
-    @Override
-    public String toString() {
-        if (dishes.isEmpty()) {
-            return "";
-        }
-        else {
-            return "Your order: " + dishes.toString() +" of "+  tablet.toString();
-        }
-
+    public int getTotalCookingTime()
+    {
+        int cookingTime = 0;
+        for (Dish dish : dishes)
+            cookingTime+= dish.getDuration();
+        return cookingTime;
     }
-
-    public boolean isEmpty() {
+    public boolean isEmpty()
+    {
         return dishes.isEmpty();
     }
-
-    public int getTotalCookingTime() {
-
-        int totalTime = 0;
-
-        for (int i = 0; i < dishes.size(); i++) {
-            totalTime = dishes.get(i).getDuration() + totalTime;
-        }
-
-        return totalTime;
-
-    }
-
-    public List<Dish> getDishes() {
+    public List<Dish> getDishes()
+    {
         return dishes;
     }
-
-    public Tablet getTablet() {
+    public Tablet getTablet()
+    {
         return tablet;
+    }
+    protected  List<Dish> initDishes() throws IOException
+    {
+        return ConsoleHelper.getAllDishesForOrder();
     }
 }
 

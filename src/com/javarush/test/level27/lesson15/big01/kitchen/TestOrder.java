@@ -5,6 +5,7 @@ import com.javarush.test.level27.lesson15.big01.Tablet;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 
@@ -14,15 +15,23 @@ public class TestOrder extends Order
     {
         super(tablet);
     }
-
     @Override
-    protected void initDishes() throws IOException
+    protected List<Dish> initDishes()
     {
-        dishes = new ArrayList<>();
-        Dish[] dishMas = Dish.values();
-        for(int i = 0; i < (int)(Math.random() * Dish.values().length); i++){
-            int random = (int)(Math.random() * (Dish.values().length));
-            dishes.add(dishMas[random]);
+        List<Dish> dishes = new ArrayList<>();
+        int dishesCount =(int) (Math.random()*3) + 1;
+        for (int i=1; i <= dishesCount; i++)
+        {
+            int dishIndex = (int) (Math.random() * Dish.values().length);
+            for (Dish dish : Dish.values())
+            {
+                if(dish.ordinal() == dishIndex)
+                {
+                    dishes.add(dish);
+                    break;
+                }
+            }
         }
+        return dishes;
     }
 }
