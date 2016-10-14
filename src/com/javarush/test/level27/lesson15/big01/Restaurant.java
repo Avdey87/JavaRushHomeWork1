@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Locale;
 
 public class Restaurant {
-    private static int ORDER_CREATING_INTERVAL = 100;
+    private static final int ORDER_CREATING_INTERVAL = 100;
     public static void main(String[] args) {
         Locale.setDefault(Locale.ENGLISH);
         List<Tablet> tablets = new ArrayList<>();
