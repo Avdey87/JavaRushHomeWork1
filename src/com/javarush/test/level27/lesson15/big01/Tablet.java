@@ -3,7 +3,7 @@ package com.javarush.test.level27.lesson15.big01;
 import com.javarush.test.level27.lesson15.big01.ad.AdvertisementManager;
 import com.javarush.test.level27.lesson15.big01.ad.NoVideoAvailableException;
 import com.javarush.test.level27.lesson15.big01.kitchen.Order;
-import com.javarush.test.level27.lesson15.big01.kitchen.TestOrder;
+
 
 import java.io.IOException;
 import java.util.Observable;
@@ -25,6 +25,17 @@ public class Tablet extends Observable {
             logger.log(Level.SEVERE, "Console is unavailable.");//
         }
     }
+
+    public void createTestOrder(){
+        Order order=null;
+        try {
+            order = new Order(this);
+            helpForCreating(order);
+        }catch (IOException e ){
+            logger.log(Level.SEVERE, "Console is unavailable.");//
+        }
+    }
+
     private void helpForCreating(Order order)  {
         ConsoleHelper.writeMessage(order.toString());
         try {
@@ -37,20 +48,9 @@ public class Tablet extends Observable {
             logger.log(Level.INFO, "No video is available for the order " + order);
         }
     }
-    public void createTestOrder(){
-        TestOrder();
-    }
 
-    private void TestOrder()
-    {
-        TestOrder order=null;
-        try {
-            order = new TestOrder(this);
-            helpForCreating(order);
-        }catch (IOException e ){
-            logger.log(Level.SEVERE, "Console is unavailable.");
-        }
-    }
+
+
 
     @Override
     public String toString() {
