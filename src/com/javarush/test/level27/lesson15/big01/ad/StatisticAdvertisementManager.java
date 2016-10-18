@@ -1,8 +1,6 @@
 package com.javarush.test.level27.lesson15.big01.ad;
 
-
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class StatisticAdvertisementManager {
     private static StatisticAdvertisementManager ourInstance = new StatisticAdvertisementManager();

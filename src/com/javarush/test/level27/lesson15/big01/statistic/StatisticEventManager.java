@@ -12,7 +12,6 @@ public class StatisticEventManager {
 
     private static final StatisticEventManager ourInstance = new StatisticEventManager();
     private StatisticStorage storage = new StatisticStorage();
-    Set<Cook> cooks = new HashSet<>();
 
     public static StatisticEventManager getInstance() {
         return ourInstance;
@@ -21,12 +20,13 @@ public class StatisticEventManager {
     private StatisticEventManager() {
     }
 
-    public Set<Cook> getCooks() {
-        return cooks;
-    }
-
     public void register(EventDataRow data) {
         storage.put(data);
+    }
+
+    public Cook[] getCooks()
+    {
+        return new Cook[0];
     }
 
     private static class StatisticStorage {
@@ -45,10 +45,6 @@ public class StatisticEventManager {
         private List<EventDataRow> getEvents(EventType eventType) {
             return eventMapStorage.get(eventType);
         }
-    }
-
-    public void register(Cook cook) {
-        cooks.add(cook);
     }
 
     private static final int[] TIME_FIELDS =
