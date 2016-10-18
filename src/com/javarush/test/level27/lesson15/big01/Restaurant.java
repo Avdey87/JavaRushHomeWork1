@@ -3,40 +3,46 @@ package com.javarush.test.level27.lesson15.big01;
 
 import com.javarush.test.level27.lesson15.big01.kitchen.Cook;
 import com.javarush.test.level27.lesson15.big01.kitchen.Waitor;
+import com.javarush.test.level27.lesson15.big01.statistic.StatisticEventManager;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class Restaurant {
+public class Restaurant
+{
     private final static int ORDER_CREATING_INTERVAL = 100;
-    public static void main(String[] args)
-    {
+    public static void main(String[] args) {
         Locale.setDefault(Locale.ENGLISH);
-        List<Tablet> tablets = new ArrayList<>();
-        Cook cook1 = new Cook("Amigo");
-        Cook cook2 = new Cook("Elly");
+        Cook cook1 = new Cook("Vova");
+        Cook cook2 = new Cook("Petr");
+        StatisticEventManager.getInstance().register(cook1);
+        StatisticEventManager.getInstance().register(cook2);
         Waitor waitor = new Waitor();
         cook1.addObserver(waitor);
         cook2.addObserver(waitor);
-        for (int i=1; i<=10; i++)
-        {
-            tablets.add(new Tablet(i));
-            if(i%2 == 0) tablets.get(i-1).addObserver(cook1);
-            else tablets.get(i-1).addObserver(cook2);
+        List<Tablet> tabletList = new ArrayList<>();
+        for (int i = 0; i < 5; i++) {
+            Tablet tablet = new Tablet(i);
+            tablet.addObserver(cook1);
+            tablet.addObserver(cook2);
+            tabletList.add(tablet);
         }
-        RandomOrderGeneratorTask generator = new RandomOrderGeneratorTask(tablets, ORDER_CREATING_INTERVAL);
-        Thread thread = new Thread(generator);
+        RandomOrderGeneratorTask generatorTask = new RandomOrderGeneratorTask(tabletList, ORDER_CREATING_INTERVAL);
+        Thread thread = new Thread(generatorTask);
         thread.start();
         try
         {
-            Thread.sleep(3000);
-        }catch(InterruptedException e){}
+            Thread.sleep(1000);
+        }
+        catch (InterruptedException e)
+        {
+        }
         thread.interrupt();
-        DirectorTablet director = new DirectorTablet();
-        director.printAdvertisementProfit();
-        director.printCookWorkloading();
-        director.printActiveVideoSet();
-        director.printArchivedVideoSet();
+        DirectorTablet directorTablet = new DirectorTablet();
+        directorTablet.printAdvertisementProfit();
+        directorTablet.printCookWorkloading();
+        directorTablet.printActiveVideoSet();
+        directorTablet.printArchivedVideoSet();
     }
 }
