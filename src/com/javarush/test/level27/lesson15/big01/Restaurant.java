@@ -9,36 +9,40 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class Restaurant
-{
-    private final static int ORDER_CREATING_INTERVAL = 100;
-    public static void main(String[] args) {
+public class Restaurant {
+    private static final int ORDER_CREATING_INTERVAL = 100; //final сука забыл указать!!! Сразу бы прошло
+
+    public static void main(String[] args) throws InterruptedException {
         Locale.setDefault(Locale.ENGLISH);
-        Cook cook1 = new Cook("Vova");
-        Cook cook2 = new Cook("Petr");
-        StatisticEventManager.getInstance().register(cook1);
+        Cook cookAmigo = new Cook("Amigo");
+        Cook cook2 = new Cook("Mamigo");
+        StatisticEventManager.getInstance().register(cookAmigo);
         StatisticEventManager.getInstance().register(cook2);
-        Waitor waitor = new Waitor();
-        cook1.addObserver(waitor);
-        cook2.addObserver(waitor);
-        List<Tablet> tabletList = new ArrayList<>();
-        for (int i = 0; i < 5; i++) {
+        List<Tablet> tablets = new ArrayList<>();
+        OrderManager orderManager = new OrderManager();
+        for(int i = 0;i < 5; i++){
             Tablet tablet = new Tablet(i);
-            tablet.addObserver(cook1);
-            tablet.addObserver(cook2);
-            tabletList.add(tablet);
+            tablet.addObserver(orderManager);
+            tablets.add(tablet);
         }
-        RandomOrderGeneratorTask generatorTask = new RandomOrderGeneratorTask(tabletList, ORDER_CREATING_INTERVAL);
-        Thread thread = new Thread(generatorTask);
-        thread.start();
+        Waitor waitor = new Waitor(); // Задача 19 Прошла после того, как объявление waitor опустил вниз, добавил в main InterruptedException
+        cookAmigo.addObserver(waitor);
+        cook2.addObserver(waitor);
+
+        Thread t = new Thread(new RandomOrderGeneratorTask(tablets, ORDER_CREATING_INTERVAL));
+        t.start();
         try
         {
-            Thread.sleep(1000);
+            Thread.sleep(2000);
+
         }
         catch (InterruptedException e)
         {
+
         }
-        thread.interrupt();
+        t.interrupt();
+
+
         DirectorTablet directorTablet = new DirectorTablet();
         directorTablet.printAdvertisementProfit();
         directorTablet.printCookWorkloading();

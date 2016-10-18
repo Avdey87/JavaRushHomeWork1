@@ -9,87 +9,128 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 
-public class AdvertisementManager
-{
-    private static final AdvertisementStorage storage = AdvertisementStorage.getInstance();
-    List<Advertisement> videos = storage.list();
-    int timeSeconds;
-    long maxProfit = 0;
-    int minRemainingTime = timeSeconds;
-    public AdvertisementManager(int timeSeconds)
-    {
+public class AdvertisementManager {
+    private int timeSeconds;
+
+    private final AdvertisementStorage storage = AdvertisementStorage.getInstance();
+
+    public AdvertisementManager(int timeSeconds) {
         this.timeSeconds = timeSeconds;
     }
-    public void processVideos()
-    {
-        List<Advertisement> bestVariant = new ArrayList<>();
-        bestVariant = pickVideosToList(null, null, timeSeconds, 0, bestVariant);
-        long totalAmount = 0;
-        int totalDuration = 0;
-        for (Advertisement ad : bestVariant)
-        {
-            ad.revalidate();
-            ConsoleHelper.writeMessage(String.format("%s is displaying... %d, %d", ad.getName(), ad.getAmountPerOneDisplaying(), ad.getAmountPerOneDisplaying() * 1000 / ad.getDuration()));
-            totalAmount += ad.getAmountPerOneDisplaying();
-            totalDuration += ad.getDuration();
+
+    public void processVideos() throws NoVideoAvailableException{
+        List<Advertisement> candidates = new ArrayList<>();
+        //Include only compatible by duration video
+        for (Advertisement ad: storage.list()) {
+            if (ad.getDuration() <= timeSeconds && ad.getHits() > 0)
+                candidates.add(ad);
         }
-        StatisticEventManager.getInstance().register(new VideoSelectedEventDataRow(bestVariant, totalAmount, totalDuration));
-    }
-    private List<Advertisement> pickVideosToList(List<Advertisement> previousVideosList, Advertisement previousAd, int remainingTime, long profit, List<Advertisement> bestResult)
-    {
-        List<Advertisement> newList = new ArrayList<>();
-        if (previousVideosList != null)
-        {
-            newList.addAll(previousVideosList);
-            remainingTime -= previousAd.getDuration();
-            profit += previousAd.getAmountPerOneDisplaying();
-            newList.add(previousAd);
-        }
-        for (Advertisement ad : videos)
-        {
-            if (remainingTime == 0)
-                break;
-            if (newList.contains(ad))
-                continue;
-            if (ad.getHits() <= 0)
-                continue;
-            if (remainingTime >= ad.getDuration())
-            {
-                bestResult = pickVideosToList(newList, ad, remainingTime, profit, bestResult);
-            }
-        }
-        if (profit > maxProfit)
-        {
-            maxProfit = profit;
-            minRemainingTime = remainingTime;
-            bestResult = newList;
-        } else if (profit == maxProfit && remainingTime < minRemainingTime)
-        {
-            minRemainingTime = remainingTime;
-            bestResult = newList;
-        } else if (profit == maxProfit && remainingTime == minRemainingTime && bestResult.size() > newList.size())
-        {
-            bestResult = newList;
-        }
-        if (bestResult.isEmpty())
-        {
-            StatisticEventManager.getInstance().register(new NoAvailableVideoEventDataRow(timeSeconds));
+
+        //If no one compatible
+        if (candidates.isEmpty()) {
             throw new NoVideoAvailableException();
         }
-        Collections.sort(bestResult, new Comparator<Advertisement>()
-        {
+
+        //Select optimal video set by exhaustive search
+        OptimalVideoSet optimalVideoSet = new OptimalVideoSet(candidates, timeSeconds);
+        List<Advertisement> optimalVideoList = optimalVideoSet.getOptimalVideoSet();
+        //Sort video playlist
+        Collections.sort(optimalVideoList, new Comparator<Advertisement>() {
             @Override
-            public int compare(Advertisement o1, Advertisement o2)
-            {
-                long pricePerVideoDiff = o2.getAmountPerOneDisplaying() - o1.getAmountPerOneDisplaying();
-                if (pricePerVideoDiff != 0)
-                    return (int) pricePerVideoDiff;
-                else
-                    return (int) (o1.getAmountPerOneDisplaying() * 100 / o1.getDuration() - o2.getAmountPerOneDisplaying() * 100 / o2.getDuration());
+            public int compare(Advertisement o1, Advertisement o2) {
+                return (int) (o1.getAmountPerOneDisplaying() == o2.getAmountPerOneDisplaying()
+                        ? (o1.getAmountPerSecond() - o2.getAmountPerSecond()) * 1000000
+                        : o2.getAmountPerOneDisplaying() - o1.getAmountPerOneDisplaying());
             }
         });
-        return bestResult;
+
+        //Register event before showing videos
+        StatisticEventManager.getInstance().register(
+                new VideoSelectedEventDataRow(
+                        optimalVideoList,
+                        optimalVideoSet.getOptimalVideoSetAmount(),
+                        optimalVideoSet.getOptimalVideoSetDuration()
+                )
+        );
+
+        //Show videos & update ads' data
+        for (int i = 0; i < optimalVideoList.size(); i++) {
+            Advertisement showingAd = optimalVideoList.get(i);
+            ConsoleHelper.writeMessage(String.format("%s is displaying... %d, %d",
+                    showingAd.getName(),
+                    showingAd.getAmountPerOneDisplaying(),
+                    (int)(showingAd.getAmountPerSecond() * 1000)
+            ));
+            showingAd.revalidate();
+
+        }
+    }
+
+    private class OptimalVideoSet  {
+        private int toShowTimeSeconds;
+        private CopyOnWriteArrayList<Advertisement> candidates_ = new CopyOnWriteArrayList<>();
+
+        private int optimalVideoSetAmount = 0;
+        private int optimalVideoSetTime = 0;
+        private CopyOnWriteArrayList<Advertisement> optimalVideoSet;
+
+
+        public OptimalVideoSet(List<Advertisement> candidates, int toShowTimeSeconds) {
+            this.toShowTimeSeconds = toShowTimeSeconds;
+            this.candidates_.addAll(candidates);
+        }
+
+        public List<Advertisement> getOptimalVideoSet() {
+            Sortout(candidates_);
+            List<Advertisement> result = new ArrayList<>();
+            result.addAll(optimalVideoSet);
+            return result;
+        }
+
+        //exhaustive search
+        private void Sortout(CopyOnWriteArrayList<Advertisement> candidates) {
+            CopyOnWriteArrayList<Advertisement> currentList = candidates;
+            //Calculate current video set parameters
+            int amountOfAd = 0;
+            int sumOfAdTime = 0;
+            for (Advertisement ad : currentList) {
+                amountOfAd += ad.getAmountPerOneDisplaying();
+                sumOfAdTime += ad.getDuration();
+            }
+            //If video set is too long eliminate each video
+            // & invoke optimal set finding in recursion sequentially
+            if (sumOfAdTime > toShowTimeSeconds)
+                for (int i = currentList.size() - 1; i >= 0; i--) {
+                    candidates = (CopyOnWriteArrayList<Advertisement>) currentList.clone();
+                    candidates.remove(i);
+                    Sortout(candidates);
+                }
+            else {
+                //Replace optimal result if current set is better
+                if (amountOfAd > optimalVideoSetAmount) {
+                    optimalVideoSet = currentList;
+                } else if (amountOfAd == optimalVideoSetAmount)
+                    if (sumOfAdTime > optimalVideoSetTime)
+                        optimalVideoSet = currentList;
+                    else if (sumOfAdTime == optimalVideoSetTime)
+                        if (currentList.size() < optimalVideoSet.size())
+                            optimalVideoSet = currentList;
+                if (optimalVideoSet == currentList) {
+                    optimalVideoSetAmount = amountOfAd;
+                    optimalVideoSetTime = sumOfAdTime;
+                }
+            }
+        }
+
+        public int getOptimalVideoSetDuration() {
+            return optimalVideoSetTime;
+        }
+
+        public int getOptimalVideoSetAmount() {
+            return optimalVideoSetAmount;
+        }
     }
 }

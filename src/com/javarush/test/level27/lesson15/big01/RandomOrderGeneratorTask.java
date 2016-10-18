@@ -4,27 +4,26 @@ package com.javarush.test.level27.lesson15.big01;
 import java.util.List;
 
 public class RandomOrderGeneratorTask implements Runnable {
-    private int interval;
     private List<Tablet> tablets;
-    public RandomOrderGeneratorTask(List<Tablet> tablets, int interval)
-    {
+    private int interval;
+
+    public RandomOrderGeneratorTask(List<Tablet> tablets, int interval) {
         this.tablets = tablets;
         this.interval = interval;
     }
+
     @Override
-    public void run()
-    {
-        if(tablets.isEmpty()) return;
-        try
-        {
-            while (true)
-            {
-                Tablet tablet =  tablets.get((int)(Math.random()*tablets.size()));
-                tablet.createTestOrder();
+    public void run() {
+        if (tablets.isEmpty())
+            return;
+        while (!Thread.currentThread().isInterrupted() ) {
+            Tablet tablet = tablets.get((int)(Math.random() * tablets.size()));
+            tablet.createTestOrder();
+            try {
                 Thread.sleep(interval);
+            } catch (InterruptedException e) {
+                return;
             }
-        }catch (InterruptedException e)
-        {
         }
     }
 }
