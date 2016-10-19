@@ -11,23 +11,31 @@ import java.util.List;
 public class Controller
 {
     private Provider[] providers;
-    public Controller(Provider... providers)
-    {
-        this.providers = providers;
-        if (this.providers.length == 0)
-            throw new IllegalArgumentException();
-    }
+
     @Override
     public String toString()
     {
-        return "Controller{" + "providers=" + Arrays.toString(providers) + '}';
+        return "Controller{" +
+                "providers=" + Arrays.toString(providers) +
+                '}';
     }
-    public void scan()
+
+    public Controller(Provider... providers)
     {
-        List<Vacancy> vacancyList = new ArrayList<>();
-        for (Provider provider : providers)
-            for (Vacancy vacancy : provider.getJavaVacancies("Москва"))
-                vacancyList.add(vacancy);
-        System.out.println(vacancyList.size());
+        if (providers == null || providers.length == 0)
+            throw new IllegalArgumentException();
+        this.providers = providers;
+    }
+
+    public void scan() {
+        ArrayList<Vacancy> vacs = new ArrayList<>();
+        try{
+            for (Provider provider:providers){
+                for (Vacancy vacancy:provider.getJavaVacancies("SOME TEXT")){
+                    vacs.add(vacancy);
+                }
+            }
+        }catch(NullPointerException e){/*NOP*/}
+        System.out.println(vacs.size());
     }
 }

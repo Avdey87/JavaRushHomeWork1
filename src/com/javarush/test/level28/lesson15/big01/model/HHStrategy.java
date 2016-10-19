@@ -7,7 +7,7 @@ import java.util.List;
 
 public class HHStrategy implements Strategy
 {
-    private static final String URL_FORMAT = "https://hh.ru/search/vacancy?text=java&enable_snippets=true&clusters=true&area=1&page=1";
+    private static final String URL_FORMAT = "http://hh.ru/search/vacancy?text=java+%s&page=%d";
     @Override
     public List<Vacancy> getVacancies(String searchString)
     {
