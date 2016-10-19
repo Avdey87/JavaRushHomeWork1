@@ -5,7 +5,7 @@ import com.javarush.test.level28.lesson15.big01.vo.Vacancy;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
+
 
 
 public class Controller
@@ -31,7 +31,7 @@ public class Controller
         ArrayList<Vacancy> vacs = new ArrayList<>();
         try{
             for (Provider provider:providers){
-                for (Vacancy vacancy:provider.getJavaVacancies("SOME TEXT")){
+                for (Vacancy vacancy:provider.getJavaVacancies("Java")){
                     vacs.add(vacancy);
                 }
             }
