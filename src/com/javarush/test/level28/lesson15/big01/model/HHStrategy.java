@@ -16,7 +16,7 @@ public class HHStrategy implements Strategy
     {
         try
         {
-            Document document = Jsoup.connect(URL_FORMAT).get();
+            Document document = Jsoup.connect(URL_FORMAT).header("User-Agent","Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.116 Safari/537.36 OPR/40.0.2308.81").referrer("http://google.ru").get();
 
         }
         catch (IOException e)
