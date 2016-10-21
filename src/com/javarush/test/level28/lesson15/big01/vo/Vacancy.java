@@ -1,50 +1,62 @@
 package com.javarush.test.level28.lesson15.big01.vo;
 
 
-public class Vacancy
-{
-    private String title;
-    private String salary;
-    private String city;
-    private String companyName;
-    private String siteName;
-    private String url;
+public class Vacancy {
+    String title;
+    String salary;
+    String city;
+    String companyName;
+    String siteName;
+    String url;
+
+    public String getTitle() {
+        return title;
+    }
+
     public void setTitle(String title) {
         this.title = title;
     }
-    public String getTitle() {
-        return this.title;
+
+    public String getSalary() {
+        return salary;
     }
+
     public void setSalary(String salary) {
         this.salary = salary;
     }
-    public String getSalary() {
-        return this.salary;
+
+    public String getCity() {
+        return city;
     }
+
     public void setCity(String city) {
         this.city = city;
     }
-    public String getCity() {
-        return this.city;
+
+    public String getCompanyName() {
+        return companyName;
     }
+
     public void setCompanyName(String companyName) {
         this.companyName = companyName;
     }
-    public String getCompanyName() {
-        return this.companyName;
+
+    public String getSiteName() {
+        return siteName;
     }
-    public void  setSiteName(String siteName) {
+
+    public void setSiteName(String siteName) {
         this.siteName = siteName;
     }
-    public String getSiteName() {
-        return this.siteName;
+
+    public String getUrl() {
+        return url;
     }
+
     public void setUrl(String url) {
         this.url = url;
     }
-    public String getUrl() {
-        return this.url;
-    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o)

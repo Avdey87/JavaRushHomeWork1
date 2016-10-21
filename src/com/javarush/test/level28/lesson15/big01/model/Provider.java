@@ -4,18 +4,19 @@ import com.javarush.test.level28.lesson15.big01.vo.Vacancy;
 
 import java.util.List;
 
-public class Provider
-{
+public class Provider {
     private Strategy strategy;
-    public void setStrategy(Strategy strategy)
-    {
+
+
+    public Provider(Strategy strategy) {
         this.strategy = strategy;
     }
-    public Provider(Strategy strategy)
-    {
+
+    public void setStrategy(Strategy strategy) {
         this.strategy = strategy;
     }
-    public List<Vacancy> getJavaVacancies(String searchString){
+
+    public List<Vacancy> getJavaVacancies(String searchString) {
         return strategy.getVacancies(searchString);
     }
 }
