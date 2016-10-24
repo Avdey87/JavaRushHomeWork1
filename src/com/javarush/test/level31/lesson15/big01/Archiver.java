@@ -1,6 +1,8 @@
 package com.javarush.test.level31.lesson15.big01;
 
 
+import com.javarush.test.level31.lesson15.big01.command.ExitCommand;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.nio.file.Paths;
@@ -17,5 +19,8 @@ public class Archiver
         BufferedReader fileNameReader = new BufferedReader(new InputStreamReader(System.in));
         String archivedFile = fileNameReader.readLine();
         zipFileManager.createZip(Paths.get(reader.readLine()));
+
+        ExitCommand exitCommand = new ExitCommand();
+        exitCommand.execute();
     }
 }
