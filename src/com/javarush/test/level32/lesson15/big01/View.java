@@ -46,7 +46,17 @@ public class View extends JFrame implements ActionListener
 
     public void initMenuBar()
     {
+        JMenuBar jMenuBar = new JMenuBar();
 
+        MenuHelper.initFileMenu(this, jMenuBar);
+        MenuHelper.initEditMenu(this, jMenuBar);
+        MenuHelper.initStyleMenu(this, jMenuBar);
+        MenuHelper.initAlignMenu(this, jMenuBar);
+        MenuHelper.initColorMenu(this, jMenuBar);
+        MenuHelper.initFontMenu(this, jMenuBar);
+        MenuHelper.initHelpMenu(this, jMenuBar);
+
+        getContentPane().add(jMenuBar, BorderLayout.NORTH);
     }
 
     public void initEditor()
@@ -64,6 +74,22 @@ public class View extends JFrame implements ActionListener
         initMenuBar();
         initEditor();
         pack();
+    }
+
+
+    public View()
+    {
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (IllegalAccessException e) {
+            ExceptionHandler.log(e);
+        } catch (InstantiationException e) {
+            ExceptionHandler.log(e);
+        } catch (UnsupportedLookAndFeelException e) {
+            ExceptionHandler.log(e);
+        } catch (ClassNotFoundException e) {
+            ExceptionHandler.log(e);
+        }
     }
 
     public void selectedTabChanged()
