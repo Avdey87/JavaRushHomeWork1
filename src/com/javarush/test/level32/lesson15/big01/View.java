@@ -15,7 +15,7 @@ public class View extends JFrame implements ActionListener
     private JTabbedPane tabbedPane = new JTabbedPane();
     private JTextPane htmlTextPane = new JTextPane();
     private JEditorPane plainTextPane = new JEditorPane();
-    public boolean canRedo;
+
 
     public Controller getController()
     {
