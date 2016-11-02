@@ -7,19 +7,16 @@ import com.javarush.test.level32.lesson15.big01.View;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 
-public class RedoAction extends AbstractAction
-{
+public class RedoAction extends AbstractAction {
 
     private View view;
 
-    public RedoAction(View view)
-    {
+    public RedoAction(View view) {
         this.view = view;
     }
 
     @Override
-    public void actionPerformed(ActionEvent e)
-    {
-
+    public void actionPerformed(ActionEvent e) {
+        view.redo();
     }
 }
