@@ -1,6 +1,7 @@
 package com.javarush.test.level32.lesson15.big01;
 
 
+
 import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.HTMLEditorKit;
 import java.io.File;
@@ -40,6 +41,8 @@ public class Controller
 
     public void init()
     {
+        createNewDocument();
+
     }
 
     public void resetDocument()
@@ -83,7 +86,11 @@ public class Controller
 
     public void createNewDocument()
     {
-
+        view.selectHtmlTab();
+        resetDocument();
+        view.setTitle("HTML редактор");
+        view.resetUndo();
+        currentFile = null;
     }
 
     public void openDocument()
@@ -104,6 +111,8 @@ public class Controller
     public void saveDocument()
     {
     }
+
+
 }
 
 
