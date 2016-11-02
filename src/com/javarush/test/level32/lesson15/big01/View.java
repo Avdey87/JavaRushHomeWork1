@@ -4,7 +4,6 @@ package com.javarush.test.level32.lesson15.big01;
 import com.javarush.test.level32.lesson15.big01.listeners.FrameListener;
 import com.javarush.test.level32.lesson15.big01.listeners.TabbedPaneChangeListener;
 import com.javarush.test.level32.lesson15.big01.listeners.UndoListener;
-
 import javax.swing.*;
 import javax.swing.undo.CannotUndoException;
 import javax.swing.undo.UndoManager;
@@ -35,7 +34,32 @@ public class View extends JFrame implements ActionListener
     @Override
     public void actionPerformed(ActionEvent e)
     {
+        String command = e.getActionCommand();
+        switch (command)
+        {
+            case "Новый":
+                controller.createNewDocument();
+                break;
+            case "Открыть":
+                controller.openDocument();
+                break;
+            case "Сохранить":
+                controller.saveDocument();
+                break;
+            case "Сохранить как...":
+                controller.saveDocumentAs();
+                break;
+            case "Выход":
+                controller.exit();
+                break;
+            case "О программе":
+                showAbout();
+                break;
+
+        }
     }
+
+
 
     public void init()
     {

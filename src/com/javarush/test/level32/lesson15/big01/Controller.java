@@ -13,6 +13,7 @@ public class Controller
     private HTMLDocument document;
     private File currentFile;
 
+
     public HTMLDocument getDocument()
     {
         return document;
@@ -66,19 +67,43 @@ public class Controller
         }
     }
 
-    public  String getPlainText()
-{
-    StringWriter stringWriter = new StringWriter();
-    try
+    public String getPlainText()
     {
-        new HTMLEditorKit().write(stringWriter, document, 0, document.getLength());
+        StringWriter stringWriter = new StringWriter();
+        try
+        {
+            new HTMLEditorKit().write(stringWriter, document, 0, document.getLength());
+        }
+        catch (Exception e)
+        {
+            ExceptionHandler.log(e);
+        }
+        return stringWriter.toString();
     }
-    catch (Exception e)
+
+    public void createNewDocument()
     {
-        ExceptionHandler.log(e);
+
     }
-    return stringWriter.toString();
-}
+
+    public void openDocument()
+    {
+
+    }
+
+    public void saveDocumen()
+    {
+
+    }
+
+    public void saveDocumentAs()
+    {
+
+    }
+
+    public void saveDocument()
+    {
+    }
 }
 
 
