@@ -5,10 +5,7 @@ package com.javarush.test.level32.lesson15.big01;
 import javax.swing.*;
 import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.HTMLEditorKit;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.StringReader;
-import java.io.StringWriter;
+import java.io.*;
 
 public class Controller
 {
@@ -97,13 +94,29 @@ public class Controller
 
     public void openDocument()
     {
+        view.selectHtmlTab();
+        JFileChooser jFileChooser = new JFileChooser();
+        jFileChooser.setFileFilter(new HTMLFileFilter());
+        int n = jFileChooser.showOpenDialog(view);
+        if (n == JFileChooser.APPROVE_OPTION)
+        {
+            currentFile = jFileChooser.getSelectedFile();
+            resetDocument();
+            view.setTitle(currentFile.getName());
 
+            try (FileReader fileReader = new FileReader(currentFile))
+            {
+                new HTMLEditorKit().read(fileReader, document, 0);
+                view.resetUndo();
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.log(e);
+            }
+        }
     }
 
-    public void saveDocumen()
-    {
 
-    }
 
     public void saveDocumentAs()
     {
@@ -129,6 +142,22 @@ public class Controller
 
     public void saveDocument()
     {
+
+        if (currentFile == null)
+        {
+            saveDocumentAs();
+        }else
+        {
+            view.selectHtmlTab();
+            try (FileWriter fileWriter = new FileWriter(currentFile))
+            {
+                new HTMLEditorKit().write(fileWriter, document, 0, document.getLength());
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.log(e);
+            }
+        }
     }
 
 
