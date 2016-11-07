@@ -85,7 +85,8 @@ public class Solution
 
         StorageStrategy strategy = new HashMapStorageStrategy();
         testStrategy(strategy, 10000);
-
+        OurHashMapStorageStrategy strategy1 = new OurHashMapStorageStrategy();
+        testStrategy(strategy1, 10000);
     }
 
 }
