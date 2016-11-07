@@ -1,15 +1,40 @@
 package com.javarush.test.level33.lesson15.big01;
 
 
+import com.javarush.test.level33.lesson15.big01.strategies.StorageStrategy;
+
+
 public class Shortener
 {
-    public Long getId(String string)
+    private Long lastId = 0L;
+    private StorageStrategy storageStrategy;
+
+    public Shortener(StorageStrategy storageStrategy)
     {
-        return null;
+        this.storageStrategy = storageStrategy;
     }
 
-    public String getString(Long id)
+    public synchronized Long getId(String string)
     {
-        return null;
+        if (storageStrategy.containsValue(string))
+        {
+            return storageStrategy.getKey(string);
+        } else
+        {
+            lastId++;
+            storageStrategy.put(lastId, string);
+            return lastId;
+        }
+    }
+
+    public synchronized String getString(Long id)
+    {
+        if (storageStrategy.containsKey(id))
+        {
+            return storageStrategy.getValue(id);
+        } else
+        {
+            return null;
+        }
     }
 }
