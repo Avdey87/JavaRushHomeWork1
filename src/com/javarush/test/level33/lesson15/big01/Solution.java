@@ -89,7 +89,8 @@ public class Solution
         testStrategy(strategy1, 10000);
         FileStorageStrategy strategy2 = new FileStorageStrategy();
         testStrategy(strategy2, 500);
-
+        OurHashBiMapStorageStrategy strategy3 = new OurHashBiMapStorageStrategy();
+        testStrategy(strategy3, 10000);
     }
 
 }
