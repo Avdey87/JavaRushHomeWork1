@@ -43,4 +43,15 @@ public class View extends JFrame
     {
         return controller.getGameObjects();
     }
+    public void completed(int level)
+    {
+        update();
+        JOptionPane.showMessageDialog(null, level + "Completed", "Level", JOptionPane.INFORMATION_MESSAGE);
+        controller.startNextLevel();
+    }
 }
+/*Наполним контроллер функционалом.
+
+            13.4.	Реализуй в контроллере метод levelCompleted(int level), он должен вызвать
+            метод completed() у представления.
+*/
