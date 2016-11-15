@@ -8,66 +8,58 @@ import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.Set;
 
-public class LevelLoader {
+public class LevelLoader
+{
     private Path levels;
-    public LevelLoader(Path levels) {
+    public LevelLoader(Path levels)
+    {
         this.levels = levels;
     }
     public GameObjects getLevel(int level) {
-        int levl = level % 60;
-        if (levl == 0) {
-            levl = 60;
+        level  = level % 60;
+        if (level == 0) {
+            level = 60;
         }
         Set<Wall> walls = new HashSet<>();
-        Set<Box> boxes = new HashSet<>();
         Set<Home> homes = new HashSet<>();
-        Player player = null;
-        int countY = 0;
-        try (BufferedReader reader = new BufferedReader(new FileReader(levels.toFile()))) {
-            String line;
-            int lvl = 0;
-            boolean flag = false;
-            while ((line = reader.readLine()) != null) {
-                if (line.contains("Maze:")) {
-                    lvl = Integer.parseInt(line.split(" ")[1]);
-                }
-                if (lvl == levl) {
-                    if (flag) {
-                        int countX = 0;
-                        for (char loop : line.toCharArray()) {
-                            switch (loop) {
-                                case 'X':
-                                    walls.add(new Wall((Model.FIELD_SELL_SIZE / 2) + (countX * Model.FIELD_SELL_SIZE), (Model.FIELD_SELL_SIZE / 2) + (countY * Model.FIELD_SELL_SIZE)));
-                                    countX++;
-                                    break;
-                                case '*':
-                                    boxes.add(new Box((Model.FIELD_SELL_SIZE / 2) + (countX * Model.FIELD_SELL_SIZE), (Model.FIELD_SELL_SIZE / 2) + (countY * Model.FIELD_SELL_SIZE)));
-                                    countX++;
-                                    break;
-                                case '.':
-                                    homes.add(new Home((Model.FIELD_SELL_SIZE / 2) + (countX * Model.FIELD_SELL_SIZE), (Model.FIELD_SELL_SIZE / 2) + (countY * Model.FIELD_SELL_SIZE)));
-                                    countX++;
-                                    break;
-                                case '@':
-                                    player = new Player((Model.FIELD_SELL_SIZE / 2) + (countX * Model.FIELD_SELL_SIZE), (Model.FIELD_SELL_SIZE / 2) + (countY * Model.FIELD_SELL_SIZE));
-                                    countX++;
-                                    break;
-                                default:
-                                    countX++;
-                                    break;
-                            }
-                        }
-                        countY++;
-                    }
-                    if (line.length() == 0) {
-                        flag = !flag;
-                        countY = 0;
+        Set<Box> boxes = new HashSet<>();
+        Player player = new Player(Model.FIELD_SELL_SIZE / 2, Model.FIELD_SELL_SIZE / 2);
+        BufferedReader reader = null;
+        try
+        {
+            reader = new BufferedReader(new FileReader(levels.toString()));
+            String s = "";
+            while(true) {
+                if (reader.readLine().equals("Maze: " + level)) break;
+            }
+            reader.readLine();
+            int x = Integer.parseInt(reader.readLine().split(" ")[2]);
+            int y = Integer.parseInt(reader.readLine().split(" ")[2]);
+            int size = Model.FIELD_SELL_SIZE;
+            for (int i = 0; i < 3; i++) reader.readLine();
+            for (int i = 0; i < y; i++) {
+                s = reader.readLine();
+                for (int j = 0; j < x; j++) {
+                    switch (s.charAt(j)) {
+                        case 'X' : walls.add(new Wall(j * size + size / 2, i * size + size / 2));
+                            break;
+                        case '*' : boxes.add(new Box(j * size + size / 2, i * size + size / 2));
+                            break;
+                        case '.' : homes.add(new Home(j * size + size / 2, i * size + size / 2));
+                            break;
+                        case '&' : boxes.add(new Box(j * size + size / 2, i * size + size / 2));
+                            homes.add(new Home(j * size + size / 2, i * size + size / 2));
+                            break;
+                        case '@' : player = new Player(j * size + size / 2, i * size + size / 2);
+                            break;
                     }
                 }
             }
-        } catch (IOException e) {
-
+            reader.close();
         }
-        return new GameObjects(walls, boxes, homes, player);
+        catch (IOException e) {
+        }
+        GameObjects objects = new GameObjects(walls, boxes, homes, player);
+        return objects;
     }
 }
