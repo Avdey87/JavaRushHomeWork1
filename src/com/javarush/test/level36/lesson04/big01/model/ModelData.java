@@ -1,4 +1,4 @@
-package com.javarush.test.level36.lesson04.model;
+package com.javarush.test.level36.lesson04.big01.model;
 
 
 import com.javarush.test.level36.lesson04.big01.bean.User;
@@ -7,6 +7,8 @@ import java.util.List;
 
 public class ModelData
 {
+    private List<User> users;
+
     public List<User> getUsers()
     {
         return users;
@@ -17,5 +19,5 @@ public class ModelData
         this.users = users;
     }
 
-    private List<User> users;
+
 }

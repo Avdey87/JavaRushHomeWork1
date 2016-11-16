@@ -1,4 +1,4 @@
-package com.javarush.test.level36.lesson04.model;
+package com.javarush.test.level36.lesson04.big01.model;
 
 import com.javarush.test.level36.lesson04.big01.bean.User;
 
@@ -17,10 +17,12 @@ public class FakeModel implements Model
     @Override
     public void loadUsers()
     {
-        List<User> users = new ArrayList<>();
+        List<User> usr = new ArrayList<>();
 
-        users.add(new User("A", 1,1));
-        users.add(new User("B", 2,2));
-        users.add(new User("C", 3,3));
+        usr.add(new User("Ivan", 1, 1));
+        usr.add(new User("Petr", 2, 3));
+        usr.add(new User("Isidor", 3, 2));
+
+        modelData.setUsers(usr);
     }
 }
