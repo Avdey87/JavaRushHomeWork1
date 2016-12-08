@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_javarushhomework" default="compile.module.javarushhomework">
+  <dirname property="module.javarushhomework.basedir" file="${ant.file.module_javarushhomework}"/>
+  
+  <property name="module.jdk.home.javarushhomework" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.javarushhomework" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.javarushhomework" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.javarushhomework" value="-encoding UTF-8 -source 1.7 -target 1.7 ${compiler.args}"/>
+  
+  <property name="javarushhomework.output.dir" value="${module.javarushhomework.basedir}/out/production/JavaRushHomeWork"/>
+  <property name="javarushhomework.testoutput.dir" value="${module.javarushhomework.basedir}/out/test/JavaRushHomeWork"/>
+  
+  <path id="javarushhomework.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="javarushhomework.module.production.classpath">
+    <path refid="${module.jdk.classpath.javarushhomework}"/>
+    <path refid="library.jackson-annotations-2.8.0.rc2.classpath"/>
+  </path>
+  
+  <path id="javarushhomework.runtime.production.module.classpath">
+    <pathelement location="${javarushhomework.output.dir}"/>
+    <path refid="library.jackson-annotations-2.8.0.rc2.classpath"/>
+  </path>
+  
+  <path id="javarushhomework.module.classpath">
+    <path refid="${module.jdk.classpath.javarushhomework}"/>
+    <pathelement location="${javarushhomework.output.dir}"/>
+    <path refid="library.jackson-annotations-2.8.0.rc2.classpath"/>
+  </path>
+  
+  <path id="javarushhomework.runtime.module.classpath">
+    <pathelement location="${javarushhomework.testoutput.dir}"/>
+    <pathelement location="${javarushhomework.output.dir}"/>
+    <path refid="library.jackson-annotations-2.8.0.rc2.classpath"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.javarushhomework">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.javarushhomework">
+    <patternset refid="excluded.from.module.javarushhomework"/>
+  </patternset>
+  
+  <path id="javarushhomework.module.sourcepath">
+    <dirset dir="${module.javarushhomework.basedir}">
+      <include name="src"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.javarushhomework" depends="compile.module.javarushhomework.production,compile.module.javarushhomework.tests" description="Compile module JavaRushHomeWork"/>
+  
+  <target name="compile.module.javarushhomework.production" depends="register.custom.compilers" description="Compile module JavaRushHomeWork; production classes">
+    <mkdir dir="${javarushhomework.output.dir}"/>
+    <javac2 destdir="${javarushhomework.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.javarushhomework}/javac">
+      <compilerarg line="${compiler.args.javarushhomework}"/>
+      <bootclasspath refid="javarushhomework.module.bootclasspath"/>
+      <classpath refid="javarushhomework.module.production.classpath"/>
+      <src refid="javarushhomework.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.javarushhomework"/>
+    </javac2>
+    
+    <copy todir="${javarushhomework.output.dir}">
+      <fileset dir="${module.javarushhomework.basedir}/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.javarushhomework.tests" depends="register.custom.compilers,compile.module.javarushhomework.production" description="compile module JavaRushHomeWork; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.javarushhomework" description="cleanup module">
+    <delete dir="${javarushhomework.output.dir}"/>
+    <delete dir="${javarushhomework.testoutput.dir}"/>
+  </target>
+</project>

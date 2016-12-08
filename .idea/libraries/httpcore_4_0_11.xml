@@ -1,0 +1,28 @@
+<component name="libraryTable">
+  <library name="httpcore-4.0.11">
+    <ANNOTATIONS>
+      <root url="jar://$PROJECT_DIR$/../test/res/httpcore-4.0.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../test/res/httpcore-4.0.1_2.jar!/" />
+    </ANNOTATIONS>
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../test/res/httpcore-4.0.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../test/res/httpcore-4.0.1_2.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$PROJECT_DIR$/../test/res/httpcore-4.0.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../test/res/httpcore-4.0.1_2.jar!/" />
+    </JAVADOC>
+    <NATIVE>
+      <root url="jar://$PROJECT_DIR$/../test/res/httpcore-4.0.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../test/res/httpcore-4.0.1_2.jar!/" />
+    </NATIVE>
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/../test/res/httpcore-4.0.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../test/res/httpcore-4.0.1_2.jar!/" />
+    </SOURCES>
+    <jarDirectory url="jar://$PROJECT_DIR$/../test/res/httpcore-4.0.1.jar!/" recursive="false" />
+    <jarDirectory url="jar://$PROJECT_DIR$/../test/res/httpcore-4.0.1_2.jar!/" recursive="false" />
+    <jarDirectory url="jar://$PROJECT_DIR$/../test/res/httpcore-4.0.1.jar!/" recursive="false" type="SOURCES" />
+    <jarDirectory url="jar://$PROJECT_DIR$/../test/res/httpcore-4.0.1_2.jar!/" recursive="false" type="SOURCES" />
+  </library>
+</component>
