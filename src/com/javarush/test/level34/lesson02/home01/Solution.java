@@ -1,11 +1,14 @@
 package com.javarush.test.level34.lesson02.home01;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.text.DecimalFormat;
+import java.util.Locale;
 
 /* Рекурсия для мат.выражения
 На вход подается строка - математическое выражение.
-Выражение включает целые и дробные числа, скобки (), пробелы, знак отрицания -, возведение в степень ^, sin(x), cos(x), tan(x)
+Выражение включает целые и дробные числа, скобки (), пробелы, знак отрицания -,
+возведение в степень ^, sin(x), cos(x), tan(x)
 Для sin(x), cos(x), tan(x) выражение внутри скобок считать градусами, например, cos(3 + 19*3)=0.5
 Степень задается так: a^(1+3) и так a^4, что эквивалентно a*a*a*a.
 С помощью рекурсии вычислить выражение и количество математических операций. Вывести через пробел результат в консоль.
@@ -17,288 +20,129 @@ sin(2*(-5+1.5*4)+28)
 Результат:
 0.5 6
 */
-public class Solution
-{
-    public static void main(String[] args)
-    {
+public class Solution {
+    public static void main(String[] args) {
         Solution solution = new Solution();
         solution.recursion("sin(2*(-5+1.5*4)+28)", 0); //expected output 0.5 6
+
+
     }
 
-    public void recursion(final String expression, int countOperation)
-    {
-        //нахождение позиций открывающих и закрывающих скобок подвыражения
-        boolean hasOpenBracketPos = false;
-        int openBracketPos = 0;
-        int closeBracketPos = 0;
-        for (int i = 0; i < expression.toCharArray().length; i++)
-        {
-            char c = expression.charAt(i);
-            if (c == '(' && hasOpenBracketPos)
-            {
-                openBracketPos = i;
-            } else if (c == '(')
-            {
-                openBracketPos = i;
-                hasOpenBracketPos = true;
-            }
-            if (c == ')')
-            {
-                closeBracketPos = i;
-                break;
-            }
-        }
-
-        // вычисление подвыражения:
-        String subExpression;
-        if (openBracketPos == 0 && closeBracketPos == 0)
-        {
-            subExpression = expression;
-        } else
-        {
-            subExpression = expression.substring(openBracketPos + 1, closeBracketPos);
-        }
-        subExpression = subExpression.replaceAll(" ", "");
-
-        //Создание списков операций и чисел
-        List<String> operations = new ArrayList<>();
-        List<String> numbers = new ArrayList<>();
-        String number = "";
-        boolean isOperationFirst = false;
-        for (int i = 0; i < subExpression.toCharArray().length; i++)
-        {
-            char c = subExpression.charAt(i);
-            if ((c >= '0' && c <= '9') || (c == '.'))
-            {
-                if (i < subExpression.toCharArray().length - 1)
-                {
-                    number += c;
-                    continue;
-                } else
-                {
-                    number += c;
-                }
-            }
-            if (!number.equals(""))
-            {
-                numbers.add(number);
-                number = "";
-            }
-            if (c == '-' || c == '+' || c == '*' || c == '/' || c == '^')
-            {
-                if (i == 0)
-                {
-                    isOperationFirst = true;
-                }
-                operations.add(String.valueOf(c));
-            }
-        }
-        int operationsAmount = operations.size();
-
-        //вычисление подвыражения:
-        double subExpressionResult = 0d;
-        while (operations.size() > 0)
-        {
-            //вычисление всех операций возведения в степень:
-            while (operations.contains("^"))
-            {
-                //вычисление одной операции возведения в степень:
-                int operationPos = 0;
-                int numberForInvolutePos = 0;
-                int involuteNumberPos = 0;
-                double numberForInvolute;
-                for (int i = 0; i < operations.size(); i++)
-                {
-                    if (operations.get(i).equals("^"))
-                    {
-                        operationPos = i;
-                        if (isOperationFirst)
-                        {
-                            numberForInvolutePos = i - 1;
-                            involuteNumberPos = i;
-                            numberForInvolute = Double.valueOf(numbers.get(i - 1));
-                            subExpressionResult = numberForInvolute;
-                            for (int j = 1; j < Double.valueOf(numbers.get(i)); j++)
-                            {
-                                subExpressionResult = subExpressionResult * numberForInvolute;
-                            }
-                        } else
-                        {
-                            numberForInvolutePos = i;
-                            involuteNumberPos = i + 1;
-                            numberForInvolute = Double.valueOf(numbers.get(i));
-                            subExpressionResult = numberForInvolute;
-                            for (int j = 1; j < Double.valueOf(numbers.get(i + 1)); j++)
-                            {
-                                subExpressionResult = subExpressionResult * numberForInvolute;
-                            }
-                        }
-                        break;
-                    }
-                }
-
-                operations.remove(operationPos);
-                numbers.remove(numberForInvolutePos);
-                numbers.remove(involuteNumberPos - 1);
-
-                if (isOperationFirst)
-                {
-                    numbers.add(operationPos - 1, String.valueOf(subExpressionResult));
-                } else
-                {
-                    numbers.add(operationPos, String.valueOf(subExpressionResult));
-                }
-            }
-
-            // вычисление всех операций умножения и деления:
-            while (operations.contains("*") || operations.contains("/"))
-            {
-                //вычисление одной операции умножения или деления:
-                int operationPos = 0;
-                int firstNumberPos = 0;
-                int secondNumberPos = 0;
-                for (int i = 0; i < operations.size(); i++)
-                {
-                    String opChar = operations.get(i);
-                    if (opChar.equals("*") || opChar.equals("/"))
-                    {
-                        operationPos = i;
-                        if (isOperationFirst)
-                        {
-                            firstNumberPos = i - 1;
-                            secondNumberPos = i;
-                        } else
-                        {
-                            firstNumberPos = i;
-                            secondNumberPos = i + 1;
-                        }
-                        double firstNumber = Double.valueOf(numbers.get(firstNumberPos));
-                        double secondNumber = Double.valueOf(numbers.get(secondNumberPos));
-                        if (opChar.equals("*"))
-                        {
-                            subExpressionResult = firstNumber * secondNumber;
-                        } else if (opChar.equals("/"))
-                        {
-                            subExpressionResult = firstNumber / secondNumber;
-                        }
-                        break;
-                    }
-                }
-
-                operations.remove(operationPos);
-                numbers.remove(firstNumberPos);
-                numbers.remove(secondNumberPos - 1);
-
-                if (isOperationFirst)
-                {
-                    numbers.add(operationPos - 1, String.valueOf(subExpressionResult));
-                } else
-                {
-                    numbers.add(operationPos, String.valueOf(subExpressionResult));
-                }
-            }
-
-            // вычисление всех операций сложения и вычитания:
-            subExpressionResult = 0d;
-            for (int i = 0; i < operations.size(); i++)
-            {
-                if (isOperationFirst && (i == 0))
-                {
-                    subExpressionResult = Double.valueOf(operations.get(i) + numbers.get(i));
-                    continue;
-                } else if (!isOperationFirst && (i == 0))
-                {
-                    subExpressionResult = Double.valueOf(numbers.get(i));
-                }
-
-                String op = operations.get(i);
-                switch (op)
-                {
-                    case "-":
-                        if (isOperationFirst)
-                        {
-                            subExpressionResult -= Double.valueOf(numbers.get(i));
-                        } else
-                        {
-                            subExpressionResult -= Double.valueOf(numbers.get(i + 1));
-                        }
-                        break;
-                    case "+":
-                        if (isOperationFirst)
-                        {
-                            subExpressionResult += Double.valueOf(numbers.get(i));
-                        } else
-                        {
-                            subExpressionResult += Double.valueOf(numbers.get(i + 1));
-                        }
-                        break;
-                }
-            }
-            operations.clear();
-        }
-
-
-        // после вычисления подвыражения, проверка и вычисление синуса, косинуса или тангенса:
-        String trigoStr = null;
-        if (openBracketPos >= 3)
-        {
-            String symbolsBeforeOpenBracket = expression.substring(openBracketPos - 3, openBracketPos);
-            switch (symbolsBeforeOpenBracket)
-            {
-                case "sin":
-                    subExpressionResult = Math.sin(Math.toRadians(subExpressionResult));
-                    operationsAmount++;
-                    trigoStr = "sin";
-                    break;
-                case "cos":
-                    subExpressionResult = Math.cos(Math.toRadians(subExpressionResult));
-                    operationsAmount++;
-                    trigoStr = "cos";
-                    break;
-                case "tan":
-                    subExpressionResult = Math.tan(Math.toRadians(subExpressionResult));
-                    operationsAmount++;
-                    trigoStr = "tan";
-                    break;
-                default:
-                    break;
-            }
-
-            subExpressionResult = Math.rint(100 * subExpressionResult) / 100.0;
-        }
-
-        //Конкатенация нового expression для рекурсии:
-        String newExpression;
-        if (expression.contains("+") || expression.contains("-") || expression.contains("*") ||
-                expression.contains("/") || expression.contains("^") || expression.contains("sin") ||
-                expression.contains("cos") || expression.contains("tan"))
-        {
-            if ((trigoStr != null) && (expression.substring(openBracketPos - 3, openBracketPos).equals(trigoStr))) {
-                newExpression = expression.substring(0, openBracketPos - 3) +
-                        subExpressionResult +
-                        (closeBracketPos == expression.length() - 1 ? "" : expression.substring(closeBracketPos + 1));
-            } else
-            {
-                if (openBracketPos == 0 && closeBracketPos == 0)
-                {
-                    newExpression = String.valueOf(subExpressionResult);
-                } else
-                {
-                    newExpression = expression.substring(0, openBracketPos) +
-                            subExpressionResult +
-                            (closeBracketPos == expression.length() - 1 ? "" : expression.substring(closeBracketPos + 1));
-                }
-            }
-            recursion(newExpression, countOperation + operationsAmount);
-        } else
-        {
-            System.out.println(expression + " " + (countOperation + operationsAmount));
-        }
+    public void recursion(final String expression, int countOperation) {
         //implement
+        Locale.setDefault(Locale.ENGLISH);
+        DecimalFormat df = new DecimalFormat("#.##");
+        String value = expression.replaceAll(" ", "");
+        int currentCountOperation = countOperation + 1;
+        int inside = 0;
+        int p1 = -1, p2 = -1, p3 = -1;
+        char[] s = value.toCharArray();
+        for (int i = s.length - 1; i >= 0; i--) {
+            switch (s[i]) {
+                case '^':
+                    if (inside == 0 && p3 == -1) p3 = i;
+                    break;
+                case '*':
+                case '/':
+                    if (inside == 0 && p2 == -1) p2 = i;
+                    break;
+                case '+':
+                case '-':
+                    if (inside == 0 && p1 == -1) p1 = i;
+                    break;
+                case '(':
+                    inside++;
+                    break;
+                case ')':
+                    inside--;
+                    break;
+            }
+        }
+        if (p1 != -1) p2 = p1;
+        if (p2 != -1) p3 = p2;
+        if (p3 != -1) {
+            PrintStream oldStream = System.out;
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            PrintStream newStream = new PrintStream(outputStream);
+            System.setOut(newStream);
+            recursion(value.substring(0, p3), currentCountOperation);
+            String[] part1 = outputStream.toString().split("\\s");
+            currentCountOperation = currentCountOperation < Integer.parseInt(part1[1]) ? Integer.parseInt(part1[1]) : currentCountOperation;
+            outputStream.reset();
+            recursion(value.substring(p3 + 1), currentCountOperation);
+            String[] part2 = outputStream.toString().split("\\s");
+            currentCountOperation = currentCountOperation < Integer.parseInt(part2[1]) ? Integer.parseInt(part2[1]) : currentCountOperation;
+            System.setOut(oldStream);
+            switch (s[p3]) {
+                case '^':
+                    customPrint(df, Math.rint(100.0 *(Math.pow(Double.parseDouble(part1[0]), Double.parseDouble(part2[0]))))/100, countOperation, currentCountOperation);
+                    return;
+                case '*':
+                    customPrint(df,  Math.rint(100.0 *(Double.parseDouble(part1[0]) * Double.parseDouble(part2[0])))/100, countOperation, currentCountOperation);
+                    return;
+                case '/':
+                    customPrint(df,  Math.rint(100.0 *(Double.parseDouble(part1[0]) / Double.parseDouble(part2[0])))/100, countOperation, currentCountOperation);
+                    return;
+                case '+':
+                    customPrint(df,  Math.rint(100.0 *(Double.parseDouble(part1[0]) + Double.parseDouble(part2[0])))/100, countOperation, currentCountOperation);
+                    return;
+                case '-':
+                    customPrint(df,  Math.rint(100.0 *(Double.parseDouble(part1[0]) - Double.parseDouble(part2[0])))/100, countOperation, currentCountOperation);
+                    return;
+            }
+        }
+        if (s.length > 0 && s[0] == '(' && s[s.length - 1] == ')') {
+            recursion(value.substring(1, s.length - 1), countOperation);
+            return;
+        }
+        if (s.length > 5 && Character.isAlphabetic(s[0]) && s[3] == '(' && s[s.length - 1] == ')') {
+            String funcName = value.substring(0, 3);
+            PrintStream oldStream = System.out;
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            PrintStream newStream = new PrintStream(outputStream);
+            System.setOut(newStream);
+            recursion(value.substring(4, s.length - 1), currentCountOperation);
+            String[] part = outputStream.toString().split("\\s");
+            currentCountOperation = currentCountOperation < Integer.parseInt(part[1]) ? Integer.parseInt(part[1]) : currentCountOperation;
+            System.setOut(oldStream);
+            if ("sin".equals(funcName)) {
+                customPrint(df,  Math.rint(100.0 *(Math.sin(Math.toRadians(Double.parseDouble(part[0])))))/100, countOperation, currentCountOperation);
+                return;
+            }
+            if ("cos".equals(funcName)) {
+                customPrint(df,  Math.rint(100.0 *(Math.cos(Math.toRadians(Double.parseDouble(part[0])))))/100, countOperation, currentCountOperation);
+                return;
+            }
+            if ("tan".equals(funcName)) {
+                customPrint(df,  Math.rint(100.0 *(Math.tan(Math.toRadians(Double.parseDouble(part[0])))))/100, countOperation, currentCountOperation);
+                return;
+            }
+        }
+        double n = 0d;
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < s.length && (Character.isDigit(s[i]) || s[i] == '.'); i++) {
+            sb.append(s[i]);
+        }
+        if (sb.length() > 0) {
+            n = Double.parseDouble(sb.toString());
+        }
+        customPrint(df, n, countOperation, countOperation);
     }
+    private void customPrint(DecimalFormat df, double v, int countOperation, int currentCountOperation) {
+        v = (Math.rint(100.0 * v) / 100);
+        String rez = String.valueOf(v);
+        if (rez.endsWith(".0"))
+        {
+            rez = rez.replace(".0","");
+        }
 
-    public Solution()
-    {
+        if (countOperation == 0) {
+            System.out.println(rez + " " + currentCountOperation);
+        } else {
+            System.out.println(rez + " " + currentCountOperation);
+        }
+    }
+    public Solution() {
         //don't delete
     }
 }
